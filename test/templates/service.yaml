@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "summer-infra.fullname" . }}
+  name: {{ include "test.fullname" . }}
   labels:
-    {{- include "summer-infra.labels" . | nindent 4 }}
+    {{- include "test.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "summer-infra.selectorLabels" . | nindent 4 }}
+    {{- include "test.selectorLabels" . | nindent 4 }}
