@@ -1,0 +1,18 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: citus-coordinator
+  namespace: {{ .Release.Namespace }}
+spec:
+  teamId: "citus"
+  volume:
+    size: 5Gi
+  numberOfInstances: 1
+  users:
+    citus: [superuser]
+  databases:
+    citusdb: citus
+  postgresql:
+    version: "15"
+    parameters:
+      shared_preload_libraries: "citus"
