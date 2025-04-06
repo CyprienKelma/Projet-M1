@@ -18,6 +18,12 @@ spec:
               echo "Waiting for coordinator...";
               until pg_isready -h citus-coordinator.{{ .Release.Namespace }}.svc.cluster.local -U citus; do sleep 2; done;
 
+              echo "Using password: $PGPASSWORD";
+              psql -h citus-coordinator.{{ .Release.Namespace }}.svc.cluster.local \
+                 -U citus -d citusdb \
+                 -c "SELECT now();"
+              until pg_isready -h citus-coordinator.{{ .Release.Namespace }}.svc.cluster.local -U citus; do sleep 2; done;
+
               echo "Registering workers...";
               psql -h citus-coordinator.{{ .Release.Namespace }}.svc.cluster.local \
                    -U citus -d citusdb \
