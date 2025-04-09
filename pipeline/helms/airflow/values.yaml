@@ -133,13 +133,13 @@ airflow:
       enabled: false
     gitSync:
       enabled: true
-      repo: "https://github.com/CyprienKelma/Projet-M1"
+      repo: "https://github.com/CyprienKelma/Projet-M1.git"
       branch: pipeline-dev
       subPath: dags
       rev: HEAD
       depth: 1
       wait: 5
-      maxFailures: 0
+      maxFailures: 1
 
   web:
     port: 8080
@@ -152,7 +152,7 @@ airflow:
 
   logs:
     persistence:
-      enabled: true
+      enabled: false
 
   createUserJob:
     useHelmHooks: true
