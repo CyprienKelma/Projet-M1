@@ -1,0 +1,10 @@
+apiVersion: v2
+name: key-db-chart
+description: Mon chart avec KeyDB comme dépendance
+type: application
+version: 0.1.0
+appVersion: "1.0"
+dependencies:
+  - name: keydb
+    version: 0.40.1
+    repository: "https://enapter.github.io/charts/"

@@ -1,0 +1,6 @@
+dependencies:
+- name: keydb
+  repository: https://enapter.github.io/charts/
+  version: 0.40.1
+digest: sha256:03eef08c26ce6e2bb229e6b5e67b083a91d0b7923fa2c66f2090dca3457ee15a
+generated: "2025-04-08T13:23:04.853927+02:00"
