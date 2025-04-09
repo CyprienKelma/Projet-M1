@@ -135,7 +135,11 @@ airflow:
       enabled: true
       repo: "https://github.com/CyprienKelma/Projet-M1"
       branch: pipeline-dev
-      syncInterval: 60s
+      subPath: dags
+      rev: HEAD
+      depth: 1
+      wait: 5
+      maxFailures: 0
 
   web:
     port: 8080
