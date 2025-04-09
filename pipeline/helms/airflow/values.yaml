@@ -119,7 +119,6 @@ volumeMounts: []
 nodeSelector: {}
 
 tolerations: []
-
 affinity: {}
 
 airflow:
@@ -135,17 +134,20 @@ airflow:
       enabled: true
       repo: "https://github.com/CyprienKelma/Projet-M1.git"
       branch: pipeline-dev
-      subPath: dags
+      subPath: pipeline/dags
       rev: HEAD
       depth: 1
       wait: 5
       maxFailures: 1
+      env :
+        - name: GIT_SYNC_SUBMODULES
+          value: "off"
 
   web:
     port: 8080
 
   workers:
-    replicas: 2
+    replicas: 1
 
   flower:
     enabled: true
@@ -166,3 +168,5 @@ airflow:
   extraEnvs:
     - name: AIRFLOW__KUBERNETES__NAMESPACE
       value: airflow
+    - name: GIT_SYNC_SUBMODULE
+      value: "off"
