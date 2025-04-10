@@ -18,7 +18,13 @@ export const DatabaseProvider = [
         entities: [User, Group],
         synchronize: true, // à mettre à false en production
       });
-      return dataSource.initialize();
+      try {
+        await dataSource.initialize();
+        console.log('✅ Postgres connected');
+      } catch (err) {
+        console.error('⚠️ Postgres connection failed:', (err as Error).message);
+      }
+      return dataSource;
     },
   },
 ];

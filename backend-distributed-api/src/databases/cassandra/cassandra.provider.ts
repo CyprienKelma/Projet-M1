@@ -11,10 +11,16 @@ export const CassandraProvider = [
         localDataCenter: configService.get('cassandra.localDataCenter') || 'datacenter1',
         protocolOptions: { port: configService.get<number>('cassandra.port') || 9042 },
       });
-
-      await client.connect();
+    
+      try {
+        await client.connect();
+        console.log('✅ Cassandra connected');
+      } catch (err) {
+        console.error('⚠️ Cassandra connection failed:');
+        // Pas de throw, on continue en silence
+      }
+    
       return client;
-    },
+    }
   },
 ];
-
