@@ -20,9 +20,16 @@ export const CassandraProvider = [
           configService.get<string>('cassandra.password') || '',
         ),
       });
-
-      await client.connect();
+    
+      try {
+        await client.connect();
+        console.log('✅ Cassandra connected');
+      } catch (err) {
+        console.error('⚠️ Cassandra connection failed:');
+        // Pas de throw, on continue en silence
+      }
+    
       return client;
-    },
+    }
   },
 ];

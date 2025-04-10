@@ -16,7 +16,12 @@ export const Neo4jProvider = [
       );
 
       // Test connection
-      await driver.verifyConnectivity();
+      try {
+        await driver.verifyConnectivity();
+        console.log('✅ Neo4j connected');
+      } catch (err) {
+        console.error('⚠️ Neo4j connection failed:', (err as Error).message);
+      }
       return driver;
     },
   },
