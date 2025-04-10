@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "test-app.fullname" . }}
+  name: {{ include "test-app.fullname" . }}-{{ include "test-app.configHash" . }}
   annotations:
     config-hash: "{{ include "test-app.configHash" . }}"
 spec:

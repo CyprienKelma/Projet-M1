@@ -16,6 +16,8 @@ env:
   NEO4J_PASSWORD: TNtKAyXXPuYQ8e
 
   CASSANDRA_HOST: demo-dc1-service.cassandra.svc.cluster.local
-  CASSANDRA_KEYSPACE: production
+  CASSANDRA_KEYSPACE: system
   CASSANDRA_USER: demo-superuser
-  CASSANDRA_PASSWORD: lwYtM5vqKVtppxoQTd3B
+  CASSANDRA_PASSWORD: aNgSePPuVZs63BlFeS02
+
+  TEST_RUN_ID: "{{ now | unixEpoch }}"
