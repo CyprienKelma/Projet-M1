@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demande de Budget – Projet Scolaire M1</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 40px auto;
+                max-width: 800px;
+                line-height: 1.6;
+                color: #2c3e50;
+                background: #f9f9f9;
+                padding: 20px;
+            }
+            h1,
+            h2 {
+                color: #1a1a1a;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 1em;
+                margin-bottom: 1em;
+            }
+            table,
+            th,
+            td {
+                border: 1px solid #ccc;
+            }
+            th,
+            td {
+                padding: 10px;
+                text-align: left;
+            }
+            blockquote {
+                background: #eef;
+                padding: 10px;
+                border-left: 5px solid #77f;
+                margin: 1em 0;
+            }
+            code {
+                background: #eee;
+                padding: 2px 4px;
+                border-radius: 4px;
+            }
+            .footer {
+                margin-top: 2em;
+                font-style: italic;
+                color: #555;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Demande de Budget – Projet Scolaire M1</h1>
+
+        <h2>Objet de la Demande</h2>
+        <p>
+            Dans le cadre de notre projet scolaire, nous avons besoin de
+            ressources techniques pour héberger et faire fonctionner notre
+            architecture. Afin de répondre à ces besoins, nous sollicitons un
+            budget pour louer un serveur VPS (Virtual Private Server) chez
+            l'hébergeur <strong>Hetzner</strong>.
+        </p>
+
+        <h2>Description du Besoin</h2>
+        <p>
+            Nous avons identifié une configuration de serveur qui répond à nos
+            exigences techniques :
+        </p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Modèle VPS</th>
+                    <th>vCPU</th>
+                    <th>RAM</th>
+                    <th>Stockage</th>
+                    <th>Bande Passante</th>
+                    <th>Tarif Horaire</th>
+                    <th>Coût Mensuel</th>
+                    <th>Coût pour 18 jours</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CX52</td>
+                    <td>16</td>
+                    <td>32 Go</td>
+                    <td>320 Go</td>
+                    <td>20 To</td>
+                    <td>0,064 € / h</td>
+                    <td>38,28 €</td>
+                    <td><strong>27,65 €</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <blockquote>
+            Le coût pour 18 jours a été calculé sur une base de 24h/24 :<br />
+            CX52 → 0,064 € × 24 h × 18 j = <strong>27,65 €</strong>
+        </blockquote>
+        <p>
+            Cette configuration garantit de bonnes performances pour l’ensemble
+            de nos travaux pratiques, tests de charge et environnements
+            distribués.
+        </p>
+
+        <h2>Justification Technique du Changement de Serveur</h2>
+        <p>
+            Actuellement, nous utilisons un serveur de
+            <strong>4 vCPU et 8 Go de RAM</strong>, mais celui-ci atteint déjà
+            ses limites, comme le montre l’interface de surveillance Kubernetes
+            :
+        </p>
+        <ul>
+            <li><strong>CPU réservé :</strong> 3,65 / 4 cores → 91,25 %</li>
+            <li>
+                <strong>Mémoire réservée :</strong> 5,48 / 7,57 Go → 72,39 %
+            </li>
+        </ul>
+        <p>
+            Le cluster Kubernetes exécute actuellement de nombreuses
+            applications et bases de données, ainsi qu’un backend d’interaction
+            essentiel à notre architecture applicative :
+        </p>
+        <ul>
+            <li>Cassandra</li>
+            <li>PostgreSQL</li>
+            <li>Neo4j</li>
+            <li>KeyDB</li>
+            <li>Airflow (scheduler, webserver, etc.)</li>
+            <li>Backend (API REST) pour l'interaction avec les utilisateurs</li>
+        </ul>
+        <p>
+            Nous avons récemment observé des défaillances système (crashes du
+            cluster Kubernetes) liées au manque de ressources.
+        </p>
+        <p>
+            Avec la mise en place de notre pipeline de données, les besoins en
+            ressources augmentent fortement. Le serveur actuel ne permet plus :
+        </p>
+        <ul>
+            <li>d’assurer une réplication stable des données,</li>
+            <li>de déployer correctement la pipeline,</li>
+            <li>
+                ni d’exécuter un stress test minimum pour valider la robustesse
+                de notre architecture.
+            </li>
+        </ul>
+        <p>
+            Le passage à une machine avec
+            <strong>16 vCPU et 32 Go de RAM (CX52)</strong> est donc nécessaire
+            pour garantir la stabilité et la performance de notre projet.
+        </p>
+
+        <h2>Facturation et Dépenses Déjà Engagées</h2>
+        <p>
+            L’hébergeur Hetzner facture mensuellement, en fonction de
+            l’utilisation réelle du serveur. Une
+            <strong>facture est émise aux alentours du 3 de chaque mois</strong
+            >, pour le mois précédent, et doit être réglée peu après.
+        </p>
+        <p>Nous avons déjà engagé les dépenses suivantes :</p>
+        <ul>
+            <li>
+                Facture de <strong>3,44 €</strong> pour mars 2025
+                (<em>03/04/2025</em>), disponible ici :
+                <a
+                    href="https://drive.google.com/file/d/1ZPLoAlQIqaVIecR2ky-Bxt5N6KmPA4gB/view?usp=sharing"
+                    >voir la facture</a
+                >.
+            </li>
+            <li>
+                Prévision du <strong>1er au 9 avril</strong> sur un serveur à
+                7,56 €/mois → <strong>2,27 €</strong>.
+            </li>
+            <li>
+                Utilisation du serveur CX52 du 10 au 27 avril →
+                <strong>27,65 €</strong>.
+            </li>
+        </ul>
+        <p>
+            Les paiements étant effectués via le
+            <strong>compte personnel Hetzner de Nathan Eudeline</strong>, nous
+            proposons que l’établissement procède au
+            <strong>remboursement sur présentation de factures</strong>.
+        </p>
+
+        <h2>Budget Demandé</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Montant estimé</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Facture VPS mars 2025</td>
+                    <td>3,44 €</td>
+                </tr>
+                <tr>
+                    <td>Prévision du 01/04 au 09/04</td>
+                    <td>2,27 €</td>
+                </tr>
+                <tr>
+                    <td>Utilisation CX52 du 10/04 au 27/04</td>
+                    <td>27,65 €</td>
+                </tr>
+                <tr>
+                    <th>Total estimé</th>
+                    <th>33,36 €</th>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Conclusion</h2>
+        <p>
+            Cette dépense est essentielle au bon déroulement de notre projet,
+            notamment pour le déploiement, les tests et la collaboration. Nous
+            nous engageons à fournir toutes les factures nécessaires à la
+            justification des frais, ainsi qu’à documenter les modalités de
+            remboursement.
+        </p>
+
+        <hr />
+        <p>
+            <strong>Nom de projet :</strong> Architecture distribuée de gestion
+            de données
+        </p>
+        <p>
+            <strong>Équipe projet :</strong><br />
+            - Cyprien Kelma – Chef de projet<br />
+            - Nathan Eudeline – Chef technique<br />
+            - Paul Pousset<br />
+            - Mamoun Kabbaj<br />
+            - Nolan Cacheux
+        </p>
+        <p><strong>Date :</strong> 09/04/2026</p>
+    </body>
+</html>
