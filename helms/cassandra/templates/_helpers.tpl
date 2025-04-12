@@ -67,26 +67,33 @@ apiVersion: k8ssandra.io/v1alpha1
 kind: K8ssandraCluster
 metadata:
   name: demo
-  namespace: {{ .Release.Namespace }}
 spec:
   cassandra:
-    serverVersion: "4.0.1"
+    serverVersion: "4.1.3"
     datacenters:
       - metadata:
           name: dc1
-        size: 2
-        storageConfig:
-          cassandraDataVolumeClaimSpec:
-            storageClassName: local-path
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 2Gi
-        config:
-          jvmOptions:
-            heapSize: 512M
-        stargate:
-          size: 1
-          heapSize: 256M
+        size: 1
+    softPodAntiAffinity: true
+    # Resources must be specified for each Cassandra node when using softPodAntiAffinity
+    resources:
+      requests:
+        cpu: "1200m"
+        memory: "2Gi"
+      limits:
+        cpu: "2400m"
+        memory: "4Gi"
+    # It is also recommended to set the JVM heap size
+    config:
+      jvmOptions:
+        heap_initial_size: 1G
+        heap_max_size: 1G
+    storageConfig:
+      cassandraDataVolumeClaimSpec:
+        storageClassName: local-path
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
 {{- end }}

@@ -1,0 +1,30 @@
+# templates/k8c1-hook.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: apply-k8c1
+  labels:
+    app: {{ include "cassandra.name" . }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: apply-k8c1
+      containers:
+        - name: apply-k8c1
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for operator to be ready..."
+              kubectl wait --for=condition=available deployment {{ .Release.Name }}-k8ssandra-operator --timeout=120s -n {{ .Release.Namespace }}
+
+              echo "Applying K8ssandraCluster manifest..."
+              cat <<EOF | kubectl apply -f -
+              {{- include "cassandra.k8ssandraClusterManifest" . | nindent 14 }}
+              EOF
