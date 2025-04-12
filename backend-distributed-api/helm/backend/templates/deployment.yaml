@@ -34,10 +34,6 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          {{- with .Values.securityContext }}
-          securityContext:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -46,43 +42,11 @@ spec:
               protocol: TCP
           env:
             - name: PORT
-              value: "3000"
-            - name: NODE_ENV
-              value: "development"
-            - name: DATABASE_HOST
-              value: "postgres-minimal-cluster.postgresql.svc.cluster.local"
-            - name: DATABASE_PORT
-              value: "5432"
-            - name: DATABASE_NAME
-              value: "demo"
-            - name: DATABASE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres.postgres-minimal-cluster.credentials.postgresql.acid.zalan.do
-                  key: username
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres.postgres-minimal-cluster.credentials.postgresql.acid.zalan.do
-                  key: password
-            - name: CASSANDRA_HOST
-              value: "demo-dc1-service.k8ssandra-operator.svc.cluster.local" # update if needed
-            - name: CASSANDRA_PORT
-              value: "9042"
-            - name: CASSANDRA_KEYSPACE
-              value: "production"
-            - name: CASSANDRA_USER
-              value: "demo-superuser"
-            - name: CASSANDRA_PASSWORD
-              value: "lwYtM5vqKVtppxoQTd3B"
-            - name: NEO4J_HOST
-              value: "my-neo4j-release.neo4j.svc.cluster.local"
-            - name: NEO4J_PORT
-              value: "7687"
-            - name: NEO4J_USER
-              value: "neo4j"
-            - name: NEO4J_PASSWORD
-              value: "neo4jazerty"
+              value: "{{ .Values.service.port }}"
+            {{- range $key, $val := .Values.connectionEnv }}
+            - name: {{ $key }}
+              value: "{{ $val }}"
+            {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}

@@ -1,5 +1,8 @@
 node_modules
 dist
 .git
-uploads
-notebooks
+Dockerfile
+pnpm-lock.yaml.backup
+*.log
+test
+coverage

@@ -10,6 +10,7 @@ import { MessageController } from './controllers/message.controller';
 import { NotificationController } from './controllers/notification.controller';
 import { GroupController } from './controllers/group.controller';
 import { StorageController } from './controllers/storage.controller';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { StorageController } from './controllers/storage.controller';
     Neo4jModule,
     CassandraModule,
     StorageModule,
+    HealthModule,
   ],
   controllers: [
     UserController,

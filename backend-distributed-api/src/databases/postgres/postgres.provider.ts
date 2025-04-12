@@ -8,21 +8,43 @@ export const DatabaseProvider = [
     provide: 'POSTGRES_DATA_SOURCE',
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => {
+      console.log(
+        `Postgres config : ${JSON.stringify(configService.get('postgres'))}`,
+      );
       const dataSource = new DataSource({
         type: 'postgres',
-        host: configService.get<string>('postgres.host'),
-        port: configService.get<number>('postgres.port'),
-        username: configService.get<string>('postgres.username'),
-        password: configService.get<string>('postgres.password'),
-        database: configService.get<string>('postgres.database'),
+        host:
+          configService.get<string>('postgres.host') ||
+          (() => {
+            throw new Error('postgres.host is not defined');
+          })(),
+        port: configService.get<number>('postgres.port') || 5432,
+        username:
+          configService.get<string>('postgres.username') ||
+          (() => {
+            throw new Error('postgres.username is not defined');
+          })(),
+        password:
+          configService.get<string>('postgres.password') ||
+          (() => {
+            throw new Error('postgres.password is not defined');
+          })(),
+        database:
+          configService.get<string>('postgres.database') ||
+          (() => {
+            throw new Error('postgres.database is not defined');
+          })(),
+        ssl: {
+          rejectUnauthorized: false, // for self-signed certs or operator-managed ones
+        },
         entities: [User, Group],
-        synchronize: true, // à mettre à false en production
+        synchronize: false, // à mettre à false en production
       });
       try {
         await dataSource.initialize();
         console.log('✅ Postgres connected');
       } catch (err) {
-        console.error('⚠️ Postgres connection failed:', (err as Error).message);
+        console.error('⚠️ Postgres connection failed:', err);
       }
       return dataSource;
     },

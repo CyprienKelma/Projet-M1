@@ -1,10 +1,14 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { UserService } from '../services/postgres/user.service';
 import { UserDto } from '../shared/dto/user.dto';
+import { FakerService } from '../services/postgres/faker.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly fakerService: FakerService,
+  ) {}
 
   @Get()
   findAll() {
@@ -19,5 +23,10 @@ export class UserController {
   @Post()
   create(@Body() userDto: UserDto) {
     return this.userService.create(userDto);
+  }
+
+  @Post('seed')
+  generate(@Body() body: { count: number }) {
+    return this.fakerService.generateFakeUsers(body.count);
   }
 }

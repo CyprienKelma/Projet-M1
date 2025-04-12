@@ -60,21 +60,16 @@ service:
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
-  enabled: false
-  className: ''
+  enabled: true
+  className: nginx
   annotations:
-    {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
-    - host: chart-example.local
+    - host: projet.bafbi.fr
       paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 resources:
   {}
@@ -90,14 +85,19 @@ resources:
   #   memory: 128Mi
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /health
     port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 10
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
@@ -125,3 +125,21 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+connectionEnv:
+  POSTGRES_HOST: postgres-minimal-cluster.postgresql.svc.cluster.local
+  POSTGRES_USERNAME: stmg
+  POSTGRES_PASSWORD: uzWe8yt6cihF9gbuJi7ot5whT2hsOQfikcCupPLRSA3a70JQQmBacfCspbjKUrwu
+  POSTGRES_DB: demo
+
+  KEYDB_HOST: key-db-keydb.key-db.svc.cluster.local
+
+  NEO4J_HOST: my-neo4j-release.neo4j.svc.cluster.local
+  NEO4J_USERNAME: neo4j
+  NEO4J_PASSWORD: TNtKAyXXPuYQ8e
+
+  CASSANDRA_HOST: demo-dc1-service.cassandra.svc.cluster.local
+  CASSANDRA_LOCAL_DATACENTER: dc1
+  CASSANDRA_KEYSPACE: system
+  CASSANDRA_USERNAME: demo-superuser
+  CASSANDRA_PASSWORD: aNgSePPuVZs63BlFeS02

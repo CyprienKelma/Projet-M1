@@ -3,7 +3,7 @@ dotenv.config();
 
 export default () => ({
   redis: {
-    host: process.env.REDIS_HOST,
-    port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    host: process.env.KEYDB_HOST,
+    port: parseInt(process.env.KEYDB_PORT || '6379', 10),
   },
 });
