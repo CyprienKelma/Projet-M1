@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "migrations.fullname" . }}-postgres-connection-check
+  labels:
+    app.kubernetes.io/name: {{ include "migrations.name" . }}
+    app.kubernetes.io/component: connection-check
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql-check
+          image: postgres:17
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Checking connection to $DATABASE_URL..."
+              until psql "$DATABASE_URL" -c '\conninfo'; do
+                echo "Waiting for PostgreSQL..."
+                sleep 2
+              done
+              echo "✅ Connected to PostgreSQL!"
+          env:
+            - name: DATABASE_URL
+              value: >-
+                postgres://{{ .Values.postgresql.env.username | urlquery }}:{{ .Values.postgresql.env.password | urlquery }}@{{ .Values.postgresql.env.host }}:5432/{{ .Values.postgresql.env.database | urlquery }}?sslmode=require

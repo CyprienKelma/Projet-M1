@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "migrations.fullname" . }}-postgres
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: dbmate
+          image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
+          imagePullPolicy: Always
+          command: ["dbmate"]
+          args: ["--wait", "--no-dump-schema", "up"]
+          env:
+            - name: DATABASE_URL
+              value: >-
+                postgres://{{ .Values.postgresql.env.username | urlquery }}:{{ .Values.postgresql.env.password | urlquery }}@{{ .Values.postgresql.env.host }}:5432/{{ .Values.postgresql.env.database | urlquery }}?sslmode=require

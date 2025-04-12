@@ -1,0 +1,10 @@
+postgresql:
+  image:
+    repository: bafbi/m1-postgres-migrations-dbmate
+    tag: latest
+  env:
+    host: postgres-minimal-cluster.postgresql.svc.cluster.local
+    username: stmg
+    password: uzWe8yt6cihF9gbuJi7ot5whT2hsOQfikcCupPLRSA3a70JQQmBacfCspbjKUrwu
+    # password: a
+    database: demo
