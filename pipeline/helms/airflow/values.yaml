@@ -6,25 +6,27 @@ airflow:
     - "psycopg2-binary"
     - "pandas"
     - "apache-airflow-providers-cncf-kubernetes"
+
   config:
     core:
       load_examples: true
 
   dags:
-    persistence:
-      enabled: false
     gitSync:
       enabled: true
       repo: "https://github.com/CyprienKelma/Projet-M1.git"
-      branch: pipeline-dev
-      subPath: pipeline
+      branch: "pipeline-dev"
+      subPath: "pipeline/dags"
       rev: HEAD
       depth: 1
       wait: 10
-      maxFailures: 1
-      env :
+      maxFailures: 10
+      env:
         - name: GIT_SYNC_SUBMODULES
           value: "off"
+
+    persistence:
+      enabled: false
 
   web:
     port: 8080
@@ -53,5 +55,3 @@ airflow:
       value: airflow
     - name: GIT_SYNC_SUBMODULE
       value: "off"
-    - name: PYTHONPATH
-      value: /opt/airflow/dags
