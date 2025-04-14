@@ -8,3 +8,14 @@ postgresql:
     password: uzWe8yt6cihF9gbuJi7ot5whT2hsOQfikcCupPLRSA3a70JQQmBacfCspbjKUrwu
     # password: a
     database: demo
+
+cassandra:
+  image:
+    repository: bafbi/m1-cassandra-migrations
+    tag: latest
+  env:
+    host: demo-dc1-service.cassandra.svc.cluster.local
+    local_datacenter: dc1
+    username: demo-superuser
+    password: aNgSePPuVZs63BlFeS02
+    keyspace: cassandra
