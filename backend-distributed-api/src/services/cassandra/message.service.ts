@@ -8,8 +8,10 @@ export class MessageService {
 
   async getMessages(conversationId: string): Promise<Message[]> {
     const query = 'SELECT * FROM messages WHERE conversation_id = ?';
-    const result = await this.cassandraClient.execute(query, [conversationId], { prepare: true });
-    return result.rows.map(row => ({
+    const result = await this.cassandraClient.execute(query, [conversationId], {
+      prepare: true,
+    });
+    return result.rows.map((row) => ({
       conversation_id: row['conversation_id'],
       message_id: row['message_id'],
       sender_id: row['sender_id'],
@@ -22,12 +24,22 @@ export class MessageService {
     const query = `
       INSERT INTO messages (conversation_id, message_id, sender_id, content, created_at)
       VALUES (?, ?, ?, ?, ?)`;
-    await this.cassandraClient.execute(query, [
-      message.conversation_id,
-      message.message_id,
-      message.sender_id,
-      message.content,
-      message.created_at,
-    ], { prepare: true });
+    await this.cassandraClient.execute(
+      query,
+      [
+        message.conversation_id,
+        message.message_id,
+        message.sender_id,
+        message.content,
+        message.created_at,
+      ],
+      { prepare: true },
+    );
+  }
+
+  async reset(): Promise<void> {
+    const query = 'TRUNCATE messages';
+    await this.cassandraClient.execute(query);
+    console.log('✅ Message table cleared');
   }
 }

@@ -31,4 +31,10 @@ export class GroupController {
       body.usersPerGroup,
     );
   }
+
+  @Post('reset')
+  async reset() {
+    await this.groupService.reset();
+    return { message: 'Group table cleared' };
+  }
 }

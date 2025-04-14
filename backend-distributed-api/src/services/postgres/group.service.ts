@@ -31,4 +31,9 @@ export class GroupService {
     const group = this.groupRepository().create(groupData);
     return await this.groupRepository().save(group);
   }
+
+  async reset(): Promise<void> {
+    await this.groupRepository().clear();
+    console.log('✅ Group table reset');
+  }
 }

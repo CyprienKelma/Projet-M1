@@ -29,4 +29,10 @@ export class UserController {
   generate(@Body() body: { count: number }) {
     return this.fakerService.generateFakeUsers(body.count);
   }
+
+  @Post('reset')
+  async reset() {
+    await this.userService.reset();
+    return { message: 'User table cleared' };
+  }
 }
