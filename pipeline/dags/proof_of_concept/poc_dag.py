@@ -1,6 +1,8 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
+from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator, KubernetesPodOperator
+#from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+
 from datetime import datetime
 from pipeline.dags.proof_of_concept.script.extract_load import extract_postgres_to_minio,extract_cassandra_tables_to_minio,load_to_duckdb
 
@@ -14,10 +16,21 @@ with DAG("poc_pipeline",
         python_callable=extract_postgres_to_minio
     )
 
-    extract_from_cassandra = PythonOperator(
+#     extract_from_cassandra = PythonOperator(
+#         task_id="extract_cassandra_to_minio",
+#         python_callable=extract_cassandra_tables_to_minio
+#    )
+
+    extract_from_cassandra = KubernetesPodOperator(
         task_id="extract_cassandra_to_minio",
-        python_callable=extract_cassandra_tables_to_minio
-   )
+        namespace="airflow",
+        name="extract-cassandra",
+        image="ghcr.io/cyprienklm/airflow-cassandra-minio:latest",  # À créer si pas encore fait
+        cmds=["python", "-c"],
+        arguments=["from script import extract_cassandra_tables_to_minio; extract_cassandra_tables_to_minio()"],
+        is_delete_operator_pod=True,
+        get_logs=True,
+)
     
     transform_data = SparkKubernetesOperator(
         task_id="spark_transform",

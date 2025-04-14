@@ -3,14 +3,30 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
-from datetime import datetime
 from minio import Minio
 import duckdb
 import psycopg2
 import pandas as pd
 import os
+from airflow.decorators import task
 
+
+@task.virtualenv(
+    use_dill=True,
+    requirements=["minio", "psycopg2-binary", "pandas", "duckdb", "os", "datetime"],
+    system_site_packages=False,
+)
 def extract_postgres_to_minio():
+    # import virtuel
+    from datetime import datetime
+    from minio import Minio
+    import duckdb
+    import psycopg2
+    import pandas as pd
+    import os
+    from datetime import datetime
+
+
     # Ici direct à la DB sans passer par le backend pour le moment
     conn = psycopg2.connect(
         host="postgres-minimal-cluster.postgresql",
@@ -74,8 +90,15 @@ def extract_cassandra_tables_to_minio():
 
 
 
-
+@task.virtualenv(
+    use_dill=True,
+    requirements=["pandas", "duckdb"],
+    system_site_packages=False,
+)
 def load_to_duckdb():
+    import pandas as pd
+    import duckdb
+
     df = pd.read_parquet("s3a://transformed/demo/users_clean.parquet")
     conn = duckdb.connect("/tmp/duckdb/analytics.duckdb")
     conn.execute("CREATE TABLE IF NOT EXISTS users AS SELECT * FROM df")
