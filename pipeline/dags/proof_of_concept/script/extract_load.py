@@ -1,13 +1,8 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-from cassandra.cluster import Cluster
-from cassandra.auth import PlainTextAuthProvider
-from minio import Minio
-import duckdb
-import psycopg2
-import pandas as pd
-import os
+# from cassandra.cluster import Cluster
+# from cassandra.auth import PlainTextAuthProvider
 from airflow.decorators import task
 
 
