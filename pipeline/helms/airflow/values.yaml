@@ -17,10 +17,10 @@ airflow:
       enabled: true
       repo: "https://github.com/CyprienKelma/Projet-M1.git"
       branch: pipeline-dev
-      subPath: pipeline/workflows
+      subPath: pipeline
       rev: HEAD
       depth: 1
-      wait: 5
+      wait: 10
       maxFailures: 1
       env :
         - name: GIT_SYNC_SUBMODULES
@@ -54,4 +54,4 @@ airflow:
     - name: GIT_SYNC_SUBMODULE
       value: "off"
     - name: PYTHONPATH
-      value: /opt/airflow/dags/pipeline
+      value: /opt/airflow/dags
