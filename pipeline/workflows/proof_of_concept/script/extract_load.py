@@ -1,6 +1,8 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
+from cassandra.cluster import Cluster
+from cassandra.auth import PlainTextAuthProvider
 from datetime import datetime
 from minio import Minio
 import duckdb
@@ -30,6 +32,47 @@ def extract_postgres_to_minio():
     if not client.bucket_exists("poc_data"):
         client.make_bucket("poc_data")
     client.fput_object("poc_data", "demo/users.csv", path)
+
+
+def extract_cassandra_tables_to_minio():
+    from cassandra.cluster import Cluster
+    from cassandra.auth import PlainTextAuthProvider
+    from minio import Minio
+    import pandas as pd
+
+    TABLES = ["messages", "notifications"]
+    auth_provider = PlainTextAuthProvider("demo-superuser", "lwYtM5vqKVtppxoQTd3B")
+    cluster = Cluster(
+        ["demo-dc1-service.k8ssandra-operator.svc.cluster.local"],
+        port=9042,
+        auth_provider=auth_provider
+    )
+    session = cluster.connect("cassandra")
+
+    client = Minio(
+        "minio-tenant.minio-tenant.svc.cluster.local:9000",
+        access_key="minioadmin",
+        secret_key="minioadmin",
+        secure=False,
+    )
+
+    if not client.bucket_exists("poc_data"):
+        client.make_bucket("poc_data")
+
+    for table in TABLES:
+        print(f"[...] Extracting {table} from Cassandra")
+        rows = session.execute(f"SELECT * FROM {table}")
+        df = pd.DataFrame(rows.all(), columns=rows.column_names)
+
+        local_path = f"/tmp/{table}.csv"
+        minio_path = f"demo/{table}.csv"
+
+        df.to_csv(local_path, index=False)
+        client.fput_object("poc_data", minio_path, local_path)
+        print(f"[✓] Uploaded {table}.csv to MinIO bucket 'poc_data'")
+
+
+
 
 
 def load_to_duckdb():
