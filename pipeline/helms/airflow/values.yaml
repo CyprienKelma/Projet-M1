@@ -38,6 +38,8 @@ airflow:
       value: airflow
     - name: GIT_SYNC_SUBMODULE
       value: "off"
+    - name: PYTHONPATH
+      value: /opt/airflow/dags/repo/pipeline/dags
 
 dags:
   gitSync:
