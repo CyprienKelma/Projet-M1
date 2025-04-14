@@ -50,6 +50,11 @@ def extract_postgres_to_minio():
     client.fput_object("poc_data", "demo/users.csv", path)
 
 
+@task.virtualenv(
+    use_dill=True,
+    requirements=["cassandra", "pandas", "minio"],
+    system_site_packages=False,
+)
 def extract_cassandra_tables_to_minio():
     from cassandra.cluster import Cluster
     from cassandra.auth import PlainTextAuthProvider
