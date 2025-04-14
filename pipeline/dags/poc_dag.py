@@ -37,7 +37,7 @@ with DAG("poc_pipeline",
     transform_data = SparkKubernetesOperator(
         task_id="spark_transform",
         namespace="spark",
-        application_file="spark_jobsdemo_bronze_to_silver/poc-transform.yaml",
+        application_file="spark_jobs/demo_bronze_to_silver/poc-transform.yaml",
         do_xcom_push=False,
     )
 
