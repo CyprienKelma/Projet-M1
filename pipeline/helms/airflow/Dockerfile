@@ -1,6 +1,6 @@
-FROM apache/airflow:2.10.5-python3.10
+FROM bitnami/airflow:latest
 
-USER airflow
+USER root
 
 RUN pip install --no-cache-dir \
     minio \
@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir \
     faker \
     sqlalchemy
 
-USER airflow
+USER 1001

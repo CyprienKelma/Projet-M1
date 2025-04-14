@@ -1,15 +1,14 @@
-image:
-  repository: cyprienkelma/airflow-m1
-  tag: latest
-  pullPolicy: Always
-
-
-executor: "KubernetesExecutor"
-
 airflow:
+  executor: "KubernetesExecutor"
+  extraPipPackages:
+    - "minio"
+    - "duckdb"
+    - "psycopg2-binary"
+    - "pandas"
+    - "apache-airflow-providers-cncf-kubernetes"
   config:
     core:
-      load_examples: false
+      load_examples: true
 
   dags:
     persistence:
@@ -18,7 +17,7 @@ airflow:
       enabled: true
       repo: "https://github.com/CyprienKelma/Projet-M1.git"
       branch: pipeline-dev
-      subPath: pipeline/dags
+      subPath: pipeline/workflows
       rev: HEAD
       depth: 1
       wait: 5
