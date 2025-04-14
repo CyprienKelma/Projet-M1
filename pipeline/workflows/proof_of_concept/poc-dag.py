@@ -7,7 +7,7 @@ import duckdb
 import psycopg2
 import pandas as pd
 import os
-from pipeline.dags.proof_of_concept.script.extract_load import extract_postgres_to_minio, load_to_duckdb
+from pipeline.workflows.proof_of_concept.script.extract_load import extract_postgres_to_minio, load_to_duckdb
 
 with DAG("poc_pipeline",
          start_date=datetime(2024, 1, 1),
