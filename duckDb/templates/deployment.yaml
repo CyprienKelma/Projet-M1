@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: duckdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: duckdb
+  template:
+    metadata:
+      labels:
+        app: duckdb
+    spec:
+      containers:
+        - name: duckdb
+          image: buntha/duckdb-bundle:0.0.3
+          
+          volumeMounts:
+            - name: duckdb-storage
+              mountPath: {{ .Values.storage.mountPath }}
+      volumes:
+        - name: duckdb-storage
+          persistentVolumeClaim:
+            claimName: duckdb-pvc

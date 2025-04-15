@@ -1,0 +1,8 @@
+image:
+  repository: duckdb/duckdb
+  tag: latest
+  pullPolicy: IfNotPresent
+
+storage:
+  size: 1Gi
+  mountPath: /data
