@@ -68,7 +68,7 @@ def extract_cassandra_tables_to_minio():
     session = cluster.connect("cassandra")
 
     client = Minio(
-        "minio-tenant.minio-tenant.svc.cluster.local:9000",
+        "minio-tenant-hl.minio-tenant.svc.cluster.local:9000",
         access_key="minio",
         secret_key="minio123",
         secure=True,
@@ -108,7 +108,7 @@ def extract_neo4j_to_minio():
 
     # Connexion à MinIO
     client = Minio(
-        "minio-tenant.minio-tenant.svc.cluster.local:9000",
+        "minio-tenant-hl.minio-tenant.svc.cluster.local:9000",
         access_key="minio",
         secret_key="minio123",
         secure=True,
