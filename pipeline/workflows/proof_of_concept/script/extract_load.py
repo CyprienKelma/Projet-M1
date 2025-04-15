@@ -43,9 +43,9 @@ def extract_postgres_to_minio():
         secure=True,
         cert_check=False
     )
-    if not client.bucket_exists("poc_data"):
-        client.make_bucket("poc_data")
-    client.fput_object("poc_data", "demo/users.csv", path)
+    if not client.bucket_exists("poc-data"):
+        client.make_bucket("poc-data")
+    client.fput_object("poc-data", "demo/users.csv", path)
 
 
 @task.virtualenv(
@@ -76,8 +76,8 @@ def extract_cassandra_tables_to_minio():
         cert_check=False
     )
 
-    if not client.bucket_exists("poc_data"):
-        client.make_bucket("poc_data")
+    if not client.bucket_exists("poc-data"):
+        client.make_bucket("poc-data")
 
     for table in TABLES:
         print(f"[...] Extracting {table} from Cassandra")
@@ -88,8 +88,8 @@ def extract_cassandra_tables_to_minio():
         minio_path = f"demo/{table}.csv"
 
         df.to_csv(local_path, index=False)
-        client.fput_object("poc_data", minio_path, local_path)
-        print(f"[✓] Uploaded {table}.csv to MinIO bucket 'poc_data'")
+        client.fput_object("poc-data", minio_path, local_path)
+        print(f"[✓] Uploaded {table}.csv to MinIO bucket 'poc-data'")
 
 
 
@@ -117,8 +117,8 @@ def extract_neo4j_to_minio():
         cert_check=False
     )
 
-    if not client.bucket_exists("poc_data"):
-        client.make_bucket("poc_data")
+    if not client.bucket_exists("poc-data"):
+        client.make_bucket("poc-data")
 
     with driver.session() as session:
         result = session.run("MATCH (n) RETURN n")
@@ -129,8 +129,8 @@ def extract_neo4j_to_minio():
     minio_path = "demo/neo4j_data.csv"
 
     df.to_csv(local_path, index=False)
-    client.fput_object("poc_data", minio_path, local_path)
-    print(f"[✓] Uploaded neo4j_data.csv to MinIO bucket 'poc_data'")
+    client.fput_object("poc-data", minio_path, local_path)
+    print(f"[✓] Uploaded neo4j_data.csv to MinIO bucket 'poc-data'")
 
 @task.virtualenv(
     use_dill=True,
