@@ -62,7 +62,7 @@ def extract_cassandra_tables_to_minio():
     TABLES = ["messages", "notifications"]
     auth_provider = PlainTextAuthProvider("demo-superuser", "aNgSePPuVZs63BlFeS02")
     cluster = Cluster(
-        ["demo-dc1-service.k8ssandra-operator.svc.cluster.local"],
+        ["demo-dc1-service.cassandra.svc.cluster.local"],
         port=9042,
         auth_provider=auth_provider
     )
@@ -76,7 +76,7 @@ def extract_cassandra_tables_to_minio():
         cert_check=False
     )
 
-    print("Cassandra connection established")
+    print("Cassandra")
 
     if not client.bucket_exists("poc-data"):
         client.make_bucket("poc-data")
