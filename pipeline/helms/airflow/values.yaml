@@ -10,6 +10,9 @@ airflow:
   config:
     core:
       load_examples: true
+    webserver:
+      enable_proxy_fix: "True"
+      base_url: "https://rancher.bafbi.fr/api/v1/namespaces/airflow/services/http:airflow-webserver:8080/proxy"
 
   web:
     port: 8080
@@ -40,6 +43,10 @@ airflow:
       value: "off"
     - name: PYTHONPATH
       value: /opt/airflow/dags/repo/pipeline/dags
+    - name: AIRFLOW__WEBSERVER__BASE_URL
+      value: "https://rancher.bafbi.fr/api/v1/namespaces/airflow/services/http:airflow-webserver:8080/proxy"
+    - name: SCRIPT_NAME
+      value: "/api/v1/namespaces/airflow/services/http:airflow-webserver:8080/proxy"
 
 dags:
   gitSync:
@@ -54,5 +61,6 @@ dags:
     env:
       - name: GIT_SYNC_SUBMODULES
         value: "off"
+
   persistence:
     enabled: false
