@@ -56,7 +56,7 @@ dags:
     subPath: "pipeline/dags"
     rev: HEAD
     depth: 1
-    wait: 10
+    wait: 5
     maxFailures: 10
     env:
       - name: GIT_SYNC_SUBMODULES

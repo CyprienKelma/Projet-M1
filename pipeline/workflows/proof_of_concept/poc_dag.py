@@ -24,7 +24,7 @@ with DAG("poc_pipeline",
         task_id="extract_cassandra_to_minio",
         namespace="airflow",
         name="extract-cassandra",
-        image="ghcr.io/cyprienklm/airflow-cassandra-minio:latest",  # À créer si pas encore fait
+        image="ghcr.io/cyprienklm/airflow-cassandra-minio:latest",
         cmds=["python", "-c"],
         arguments=["from script import extract_cassandra_tables_to_minio; extract_cassandra_tables_to_minio()"],
         is_delete_operator_pod=True,
