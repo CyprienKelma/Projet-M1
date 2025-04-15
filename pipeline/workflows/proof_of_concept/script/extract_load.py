@@ -24,10 +24,10 @@ def extract_postgres_to_minio():
 
     # Ici direct à la DB sans passer par le backend pour le moment
     conn = psycopg2.connect(
-        host="postgres-minimal-cluster.postgresql",
-        dbname="mydb",
-        user="myuser",
-        password="mypassword"
+        host="postgres-minimal-cluster.postgresql.svc.cluster.local",
+        dbname="demo",
+        user="stmg",
+        password="uzWe8yt6cihF9gbuJi7ot5whT2hsOQfikcCupPLRSA3a70JQQmBacfCspbjKUrwu"
     )
     df = pd.read_sql("SELECT * FROM users", conn)
     path = "/tmp/users.csv"
@@ -35,9 +35,9 @@ def extract_postgres_to_minio():
 
     # Pareil pour le Tenant de MinIO
     client = Minio(
-        "minio-tenant.minio-tenant.svc.cluster.local:9000",
-        access_key="minioadmin",
-        secret_key="minioadmin",
+        "minio-tenant-hl.minio-tenant.svc.cluster.local:9000",
+        access_key="minio",
+        secret_key="minio123",
         secure=False,
     )
     if not client.bucket_exists("poc_data"):
@@ -67,8 +67,8 @@ def extract_cassandra_tables_to_minio():
 
     client = Minio(
         "minio-tenant.minio-tenant.svc.cluster.local:9000",
-        access_key="minioadmin",
-        secret_key="minioadmin",
+        access_key="minio",
+        secret_key="minio123",
         secure=False,
     )
 
