@@ -40,7 +40,7 @@ def extract_postgres_to_minio():
         "minio-tenant-hl.minio-tenant.svc.cluster.local:9000",
         access_key="minio",
         secret_key="minio123",
-        secure=False,
+        secure=True,
     )
     if not client.bucket_exists("poc_data"):
         client.make_bucket("poc_data")
@@ -71,7 +71,7 @@ def extract_cassandra_tables_to_minio():
         "minio-tenant.minio-tenant.svc.cluster.local:9000",
         access_key="minio",
         secret_key="minio123",
-        secure=False,
+        secure=True,
     )
 
     if not client.bucket_exists("poc_data"):
@@ -111,7 +111,7 @@ def extract_neo4j_to_minio():
         "minio-tenant.minio-tenant.svc.cluster.local:9000",
         access_key="minio",
         secret_key="minio123",
-        secure=False,
+        secure=True,
     )
 
     if not client.bucket_exists("poc_data"):
