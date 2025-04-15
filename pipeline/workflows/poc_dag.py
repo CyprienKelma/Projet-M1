@@ -31,16 +31,7 @@ with DAG("poc_pipeline",
         get_logs=True,
 )
     
-    extract_from_neo4j = KubernetesPodOperator(
-        task_id="extract_neo4j_to_minio",
-        namespace="airflow",
-        name="extract-neo4j",
-        image="ghcr.io/cyprienklm/airflow-cassandra-minio:latest",  # À créer si pas encore fait
-        cmds=["python", "-c"],
-        arguments=["from script import extract_neo4j_to_minio; extract_neo4j_to_minio()"],
-        is_delete_operator_pod=True,
-        get_logs=True,
-    )
+    extract_from_neo4j = extract_neo4j_to_minio()
     
     transform_data = SparkKubernetesOperator(
         task_id="spark_transform",
