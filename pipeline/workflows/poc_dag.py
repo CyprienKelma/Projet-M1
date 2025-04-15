@@ -15,21 +15,18 @@ with DAG("poc_pipeline",
 
     extract_from_postgres = extract_postgres_to_minio()
 
-#     extract_from_cassandra = PythonOperator(
-#         task_id="extract_cassandra_to_minio",
-#         python_callable=extract_cassandra_tables_to_minio
-#    )
+    extract_from_cassandra = extract_cassandra_tables_to_minio()
 
-    extract_from_cassandra = KubernetesPodOperator(
-        task_id="extract_cassandra_to_minio",
-        namespace="airflow",
-        name="extract-cassandra",
-        image="ghcr.io/cyprienklm/airflow-cassandra-minio:latest",
-        cmds=["python", "-c"],
-        arguments=["from script import extract_cassandra_tables_to_minio; extract_cassandra_tables_to_minio()"],
-        is_delete_operator_pod=True,
-        get_logs=True,
-)
+    # extract_from_cassandra = KubernetesPodOperator(
+    #     task_id="extract_cassandra_to_minio",
+    #     namespace="airflow",
+    #     name="extract-cassandra",
+    #     image="ghcr.io/cyprienklm/airflow-cassandra-minio:latest",
+    #     cmds=["python", "-c"],
+    #     arguments=["from script import extract_cassandra_tables_to_minio; extract_cassandra_tables_to_minio()"],
+    #     is_delete_operator_pod=True,
+    #     get_logs=True,
+    # )
     
     extract_from_neo4j = extract_neo4j_to_minio()
     
