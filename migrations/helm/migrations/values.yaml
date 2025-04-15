@@ -8,6 +8,7 @@ postgresql:
     password: uzWe8yt6cihF9gbuJi7ot5whT2hsOQfikcCupPLRSA3a70JQQmBacfCspbjKUrwu
     # password: a
     database: demo
+  reset: false
 
 cassandra:
   image:
@@ -19,3 +20,4 @@ cassandra:
     username: demo-superuser
     password: aNgSePPuVZs63BlFeS02
     keyspace: cassandra
+  reset: false

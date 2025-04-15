@@ -1,6 +1,6 @@
 export interface Notification {
+  user_id: number; // Changed order to match primary key
   notification_id: string;
-  user_id: number;
   type: string;
   message: string;
   read: boolean;

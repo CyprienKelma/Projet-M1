@@ -35,3 +35,30 @@ for file in ./migrations/*.cql; do
 done
 
 echo "✅ All migrations complete"
+
+# Verification section
+echo "🔍 Verifying Cassandra state..."
+echo "=============================================="
+echo "📚 Available keyspaces:"
+cqlsh $HOST $PORT -u $USER -p $PASS -e "DESCRIBE KEYSPACES;"
+
+echo "=============================================="
+echo "📋 Tables in $KEYSPACE keyspace:"
+cqlsh $HOST $PORT -u $USER -p $PASS -e "USE $KEYSPACE; DESCRIBE TABLES;"
+
+echo "=============================================="
+echo "📝 Migration status:"
+# Fixed the migration status query to simply show the timestamp without dateOf function
+cqlsh $HOST $PORT -u $USER -p $PASS -e "USE $KEYSPACE; SELECT id, applied_at FROM m1_migrations ORDER BY id;"
+
+echo "=============================================="
+echo "🔍 Table structures:"
+# Check for specific expected tables directly rather than parsing output
+for table in messages notifications m1_migrations; do
+  echo " "
+  echo "📄 Table: $table"
+  cqlsh $HOST $PORT -u $USER -p $PASS -e "USE $KEYSPACE; DESCRIBE TABLE $table;" || echo "Table $table does not exist"
+done
+
+echo "=============================================="
+echo "✅ Verification complete"

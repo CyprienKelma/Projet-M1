@@ -21,8 +21,18 @@ export class NotificationController {
   }
 
   @Post('seed')
-  generate(@Body() body: { userId: number; count: number }) {
-    return this.fakerService.generateFakeNotifications(body.userId, body.count);
+  generate(@Body() body: { userId: number | string; count: number }) {
+    // Ensure userId is a proper integer
+    const userIdInt =
+      typeof body.userId === 'number'
+        ? body.userId
+        : parseInt(String(body.userId), 10);
+
+    if (isNaN(userIdInt)) {
+      throw new Error('Invalid userId: must be a number');
+    }
+
+    return this.fakerService.generateFakeNotifications(userIdInt, body.count);
   }
 
   @Post('reset')

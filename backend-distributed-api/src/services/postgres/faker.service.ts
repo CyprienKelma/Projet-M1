@@ -11,7 +11,7 @@ export class FakerService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async generateFakeUsers(count = 10): Promise<void> {
+  async generateFakeUsers(count = 10) {
     const userRepository = this.dataSource.getRepository(User);
 
     const users = Array.from({ length: count }).map(() => {
@@ -25,12 +25,10 @@ export class FakerService {
 
     await userRepository.save(users);
     console.log(`✅ Inserted ${count} fake users`);
+    return users;
   }
 
-  async generateGroupsWithUsers(
-    groupCount = 3,
-    usersPerGroup = 5,
-  ): Promise<void> {
+  async generateGroupsWithUsers(groupCount = 3, usersPerGroup = 5) {
     const groupRepo = this.dataSource.getRepository(Group);
     const userRepo = this.dataSource.getRepository(User);
 
@@ -57,6 +55,8 @@ export class FakerService {
       console.log(
         `✅ Group "${group.name}" with ${users.length} users created`,
       );
+
+      return group;
     }
   }
 }

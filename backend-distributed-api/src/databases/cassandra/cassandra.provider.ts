@@ -20,6 +20,8 @@ export const CassandraProvider = [
           (() => {
             throw new Error('cassandra.localDataCenter is not defined');
           })(),
+        keyspace:
+          configService.get<string>('cassandra.keyspace') || 'cassandra', // Add this line
         protocolOptions: {
           port: configService.get<number>('cassandra.port') || 9042,
         },
@@ -38,6 +40,9 @@ export const CassandraProvider = [
       try {
         await client.connect();
         console.log('✅ Cassandra connected');
+        // show the tables
+        // const result = await client.execute(`describe tables`);
+        // console.log('Cassandra tables:', result.rows);
       } catch (err) {
         console.error('⚠️ Cassandra connection error:', err);
       }

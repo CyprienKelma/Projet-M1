@@ -12,8 +12,8 @@ export class NotificationService {
       prepare: true,
     });
     return result.rows.map((row) => ({
-      notification_id: row['notification_id'],
       user_id: row['user_id'],
+      notification_id: row['notification_id'],
       type: row['type'],
       message: row['message'],
       read: row['read'],
@@ -23,13 +23,13 @@ export class NotificationService {
 
   async create(notification: Notification): Promise<void> {
     const query = `
-      INSERT INTO notifications (notification_id, user_id, type, message, read, created_at)
+      INSERT INTO notifications (user_id, notification_id, type, message, read, created_at)
       VALUES (?, ?, ?, ?, ?, ?)`;
     await this.cassandraClient.execute(
       query,
       [
-        notification.notification_id,
         notification.user_id,
+        notification.notification_id,
         notification.type,
         notification.message,
         notification.read,

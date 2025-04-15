@@ -1,10 +1,11 @@
+{{- if .Values.postgresql.reset }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "migrations.fullname" . }}-postgres-migrations
+  name: {{ include "migrations.fullname" . }}-postgres-reset
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-weight": "-5"  # Run before migrations
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 0
@@ -12,12 +13,13 @@ spec:
     spec:
       restartPolicy: Never
       containers:
-        - name: dbmate
+        - name: dbmate-reset
           image: "{{ .Values.postgresql.image.repository }}:{{ .Values.postgresql.image.tag }}"
           imagePullPolicy: Always
           command: ["dbmate"]
-          args: ["--wait", "--no-dump-schema", "up"]
+          args: ["drop"]
           env:
             - name: DATABASE_URL
               value: >-
                 postgres://{{ .Values.postgresql.env.username | urlquery }}:{{ .Values.postgresql.env.password | urlquery }}@{{ .Values.postgresql.env.host }}:5432/{{ .Values.postgresql.env.database | urlquery }}?sslmode=require
+{{- end }}

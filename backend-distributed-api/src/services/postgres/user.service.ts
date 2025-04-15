@@ -25,7 +25,10 @@ export class UserService {
   }
 
   async reset(): Promise<void> {
-    await this.userRepository.clear();
+    // Use raw SQL with CASCADE to clear constraints
+    await this.dataSource.query(
+      'TRUNCATE TABLE users, groups_users_user CASCADE',
+    );
     console.log('✅ User table cleared');
   }
 }

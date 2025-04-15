@@ -140,6 +140,6 @@ connectionEnv:
 
   CASSANDRA_HOST: demo-dc1-service.cassandra.svc.cluster.local
   CASSANDRA_LOCAL_DATACENTER: dc1
-  CASSANDRA_KEYSPACE: system
+  CASSANDRA_KEYSPACE: cassandra
   CASSANDRA_USERNAME: demo-superuser
   CASSANDRA_PASSWORD: aNgSePPuVZs63BlFeS02

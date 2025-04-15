@@ -21,8 +21,14 @@ export class Group {
   @ManyToMany(() => User, { cascade: true })
   @JoinTable({
     name: 'groups_users_user',
-    joinColumns: [{ name: 'groups_id' }], // This entity (Group)
-    inverseJoinColumns: [{ name: 'users_id' }], // The related entity (User)
+    joinColumn: {
+      name: 'groups_id', // name for this side (Group)
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'users_id', // name for the other side (User)
+      referencedColumnName: 'id',
+    },
   })
   users: User[];
 }

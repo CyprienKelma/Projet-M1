@@ -33,7 +33,10 @@ export class GroupService {
   }
 
   async reset(): Promise<void> {
-    await this.groupRepository().clear();
-    console.log('✅ Group table reset');
+    // Use raw SQL with CASCADE to clear constraints
+    await this.dataSource.query(
+      'TRUNCATE TABLE groups, groups_users_user CASCADE',
+    );
+    console.log('✅ Group table cleared');
   }
 }
