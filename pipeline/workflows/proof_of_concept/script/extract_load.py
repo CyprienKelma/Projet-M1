@@ -50,7 +50,7 @@ def extract_postgres_to_minio():
 
 @task.virtualenv(
     use_dill=True,
-    requirements=["cassandra", "pandas", "minio"],
+    requirements=["cassandra-driver", "pandas", "minio"],
     system_site_packages=False,
 )
 def extract_cassandra_tables_to_minio():
