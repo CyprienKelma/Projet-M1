@@ -13,10 +13,7 @@ with DAG("poc_pipeline",
          schedule_interval=None,
          catchup=False) as dag:
 
-    extract_from_postgres = PythonOperator(
-        task_id="extract_postgres_to_minio",
-        python_callable=extract_postgres_to_minio
-    )
+    extract_from_postgres = extract_postgres_to_minio()
 
 #     extract_from_cassandra = PythonOperator(
 #         task_id="extract_cassandra_to_minio",
