@@ -89,6 +89,43 @@ def extract_cassandra_tables_to_minio():
 
 
 
+#extract_neo4j_to_minio()
+@task.virtualenv(
+    use_dill=True,
+    requirements=["pandas", "neo4j","minio"],
+    system_site_packages=False,
+)
+def extract_neo4j_to_minio():
+    from minio import Minio
+    from neo4j import GraphDatabase
+    import pandas as pd
+
+    # Connexion à Neo4j
+    uri = "neo4j://my-neo4j-release.neo4j.svc.cluster.local:7687"
+    driver = GraphDatabase.driver(uri, auth=("neo4j", "TNtKAyXXPuYQ8e"))
+
+    # Connexion à MinIO
+    client = Minio(
+        "minio-tenant.minio-tenant.svc.cluster.local:9000",
+        access_key="minio",
+        secret_key="minio123",
+        secure=False,
+    )
+
+    if not client.bucket_exists("poc_data"):
+        client.make_bucket("poc_data")
+
+    with driver.session() as session:
+        result = session.run("MATCH (n) RETURN n")
+        data = [record["n"] for record in result]
+
+    df = pd.DataFrame(data)
+    local_path = "/tmp/neo4j_data.csv"
+    minio_path = "demo/neo4j_data.csv"
+
+    df.to_csv(local_path, index=False)
+    client.fput_object("poc_data", minio_path, local_path)
+    print(f"[✓] Uploaded neo4j_data.csv to MinIO bucket 'poc_data'")
 
 @task.virtualenv(
     use_dill=True,

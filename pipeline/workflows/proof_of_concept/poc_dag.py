@@ -4,7 +4,7 @@ from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKu
 #from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
 from datetime import datetime
-from proof_of_concept.script.extract_load import extract_postgres_to_minio,extract_cassandra_tables_to_minio,load_to_duckdb
+from proof_of_concept.script.extract_load import extract_postgres_to_minio,extract_cassandra_tables_to_minio,load_to_duckdb,extract_neo4j_to_minio
 #from pipeline.dags.proof_of_concept.script.extract_load import extract_postgres_to_minio,extract_cassandra_tables_to_minio,load_to_duckdb
 
 
@@ -30,6 +30,17 @@ with DAG("poc_pipeline",
         is_delete_operator_pod=True,
         get_logs=True,
 )
+    
+    extract_from_neo4j = KubernetesPodOperator(
+        task_id="extract_neo4j_to_minio",
+        namespace="airflow",
+        name="extract-neo4j",
+        image="ghcr.io/cyprienklm/airflow-cassandra-minio:latest",  # À créer si pas encore fait
+        cmds=["python", "-c"],
+        arguments=["from script import extract_neo4j_to_minio; extract_neo4j_to_minio()"],
+        is_delete_operator_pod=True,
+        get_logs=True,
+    )
     
     transform_data = SparkKubernetesOperator(
         task_id="spark_transform",
