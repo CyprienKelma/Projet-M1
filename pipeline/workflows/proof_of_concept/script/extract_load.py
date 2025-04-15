@@ -41,6 +41,7 @@ def extract_postgres_to_minio():
         access_key="minio",
         secret_key="minio123",
         secure=True,
+        cert_check=False
     )
     if not client.bucket_exists("poc_data"):
         client.make_bucket("poc_data")
@@ -72,6 +73,7 @@ def extract_cassandra_tables_to_minio():
         access_key="minio",
         secret_key="minio123",
         secure=True,
+        cert_check=False
     )
 
     if not client.bucket_exists("poc_data"):
@@ -112,6 +114,7 @@ def extract_neo4j_to_minio():
         access_key="minio",
         secret_key="minio123",
         secure=True,
+        cert_check=False
     )
 
     if not client.bucket_exists("poc_data"):
