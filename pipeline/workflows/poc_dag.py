@@ -54,4 +54,4 @@ with DAG("poc_pipeline",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_cassandra] >> transform_data >> load_on_data_warehouse
+[extract_from_postgres, extract_from_cassandra,extract_from_neo4j] >> transform_data >> load_on_data_warehouse
