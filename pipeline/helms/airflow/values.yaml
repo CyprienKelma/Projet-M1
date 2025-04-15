@@ -9,7 +9,7 @@ airflow:
 
   config:
     core:
-      load_examples: true
+      load_examples: false
     webserver:
       enable_proxy_fix: "True"
       base_url: "https://rancher.bafbi.fr/api/v1/namespaces/airflow/services/http:airflow-webserver:8080/proxy"
@@ -42,18 +42,20 @@ airflow:
     - name: GIT_SYNC_SUBMODULE
       value: "off"
     - name: PYTHONPATH
-      value: /opt/airflow/dags/repo/pipeline/dags
+      value: /opt/airflow/dags/repo
     - name: AIRFLOW__WEBSERVER__BASE_URL
       value: "https://rancher.bafbi.fr/api/v1/namespaces/airflow/services/http:airflow-webserver:8080/proxy"
     - name: SCRIPT_NAME
       value: "/api/v1/namespaces/airflow/services/http:airflow-webserver:8080/proxy"
+    - name: AIRFLOW__CORE__DAGS_FOLDER
+      value: /opt/airflow/dags/repo/pipeline/workflows
 
 dags:
   gitSync:
     enabled: true
     repo: "https://github.com/CyprienKelma/Projet-M1.git"
     branch: "pipeline-dev"
-    subPath: "pipeline/dags"
+    subPath: "pipeline/workflows"
     rev: HEAD
     depth: 1
     wait: 5
