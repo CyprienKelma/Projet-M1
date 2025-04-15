@@ -4,11 +4,13 @@ from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKu
 # from cassandra.cluster import Cluster
 # from cassandra.auth import PlainTextAuthProvider
 from airflow.decorators import task
+import os
+import datetime
 
 
 @task.virtualenv(
     use_dill=True,
-    requirements=["minio", "psycopg2-binary", "pandas", "duckdb", "os", "datetime"],
+    requirements=["minio", "psycopg2-binary", "pandas", "duckdb"],
     system_site_packages=False,
 )
 def extract_postgres_to_minio():
