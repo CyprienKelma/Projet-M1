@@ -76,6 +76,8 @@ def extract_cassandra_tables_to_minio():
         cert_check=False
     )
 
+    print("Cassandra connection established")
+
     if not client.bucket_exists("poc-data"):
         client.make_bucket("poc-data")
 
