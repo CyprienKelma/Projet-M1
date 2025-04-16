@@ -46,7 +46,7 @@ with DAG("poc_pipeline",
             "--conf spark.hadoop.security.authentication=NOSASL "
             "--conf hadoop.security.authentication=NOSASL "
             "/opt/spark/scripts/bronze_to_silver.py"
-        ]
+        ],
         name="spark-transform-job", # <-- du pod kubernetes (doit être unique !)
         is_delete_operator_pod=True, # delete à chaque fin de task
         get_logs=True, # dans l'ui d'airflow
