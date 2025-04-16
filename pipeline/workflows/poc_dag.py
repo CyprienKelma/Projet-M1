@@ -33,8 +33,6 @@ with DAG("poc_pipeline",
         image="apache/spark-py:v3.4.0",
         cmds=["bash", "-c"],
         arguments=[
-            "USER=${USER:-airflow} && "
-            "echo \"$USER:x:1000:1000:$USER user:/home/$USER:/bin/bash\" >> /etc/passwd && "
             "mkdir -p /tmp/.ivy2/local && chmod -R 777 /tmp/.ivy2 && "
             "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
             "/opt/spark/bin/spark-submit "
@@ -71,6 +69,11 @@ with DAG("poc_pipeline",
             "IVY_HOME": "/tmp/.ivy2",
             "USER": "airflow"
         },
+        pod_security_context=k8s.V1PodSecurityContext(
+            run_as_user=1000,
+            run_as_group=1000,
+            fs_group=1000
+        ),
     )
 
 
