@@ -9,19 +9,6 @@ from proof_of_concept.script.extract_load import extract_postgres_to_minio,extra
 #from pipeline.dags.proof_of_concept.script.extract_load import extract_postgres_to_minio,extract_cassandra_tables_to_minio,load_to_duckdb
 
 
-
-pod_override = {
-    "spec": {
-        "securityContext": {
-            "runAsUser": 1000,
-            "runAsGroup": 1000,
-            "fsGroup": 1000
-        }
-    }
-}
-
-
-
 with DAG("poc_pipeline",
          start_date=datetime(2024, 1, 1),
          schedule_interval=None,
@@ -81,8 +68,7 @@ with DAG("poc_pipeline",
             "HOME": "/tmp",
             "IVY_HOME": "/tmp/.ivy2",
             "USER": "airflow"
-        },
-        pod_override=pod_override
+        }
     )
 
 
