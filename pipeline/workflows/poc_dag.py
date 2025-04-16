@@ -20,15 +20,15 @@ with DAG("poc_pipeline",
     
     extract_from_neo4j = extract_neo4j_to_minio()
     
-    multi_transform_data = SparkKubernetesOperator(
-        task_id="spark_transform_single",
-        namespace="spark",
-        application_file="spark_jobs/demo_bronze_to_silver/poc-transform.yaml",
-        do_xcom_push=False,
-    )
+    # multi_transform_data = SparkKubernetesOperator(
+    #     task_id="spark_transform_multi",
+    #     namespace="spark",
+    #     application_file="spark_jobs/demo_bronze_to_silver/poc-transform.yaml",
+    #     do_xcom_push=False,
+    # )
 
     single_transform_data = KubernetesPodOperator(
-        task_id="spark_transform_multi",
+        task_id="spark_transform_single",
         namespace="spark", # la ou on execute le pod
         image="cyprienklm/spark-airflow:3.4.0",
         cmds=["bash", "-c"],
@@ -79,4 +79,4 @@ with DAG("poc_pipeline",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_cassandra ,extract_from_neo4j] >> multi_transform_data >> single_transform_data >> load_on_data_warehouse
+[extract_from_postgres, extract_from_cassandra ,extract_from_neo4j] >> single_transform_data >> load_on_data_warehouse
