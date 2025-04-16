@@ -26,7 +26,7 @@ with DAG("poc_pipeline",
     #     application_file="spark_jobs/demo_bronze_to_silver/poc-transform.yaml",
     #     do_xcom_push=False,
     # )
-
+    
     transform_data = KubernetesPodOperator(
         task_id="spark_transform",
         namespace="spark", # la ou on execute le pod
@@ -79,4 +79,4 @@ with DAG("poc_pipeline",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_cassandra, extract_from_neo4j] >> transform_data >> load_on_data_warehouse
+[extract_from_postgres, extract_from_neo4j] >> transform_data >> load_on_data_warehouse
