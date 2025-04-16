@@ -32,14 +32,17 @@ with DAG("poc_pipeline",
         namespace="spark", # la ou on execute le pod
         image="apache/spark-py:v3.4.0",
         cmds=["bash", "-c"],
-        arguments=[
+        arguments=[ # pour que le pod puisse se connecter à minio
             "mkdir -p /tmp/.ivy2/local && "
             "chmod -R 777 /tmp/.ivy2 && "
             "export IVY_HOME=/tmp/.ivy2 && "
+            "export HOME=/tmp && "
             "/opt/spark/bin/spark-submit "
             "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
             "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
             "--conf spark.jars.ivy=/tmp/.ivy2 "
+            "--conf spark.hadoop.security.authentication=NOSASL "
+            "--conf hadoop.security.authentication=NOSASL "
             "/opt/spark/scripts/bronze_to_silver.py"
         ],
         name="spark-transform-job", # <-- du pod kubernetes (doit être unique !)

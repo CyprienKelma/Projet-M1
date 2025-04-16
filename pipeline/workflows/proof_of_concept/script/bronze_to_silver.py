@@ -12,4 +12,4 @@ df = spark.read.csv("s3a://bronze/demo/users.csv", header=True)
 #df_clean = df.filter(df["email"].isNotNull())
 df.write.mode("overwrite").parquet("s3a://silver/demo/users_clean.parquet")
 
-print("Transfortmation réussie poru Bronze ---> Silver")
+print("Transfortmation réussie pour Bronze ---> Silver")
