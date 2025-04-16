@@ -57,6 +57,7 @@ with DAG("poc_pipeline",
             k8s.V1Volume(
                 name="script-volume",
                 config_map=k8s.V1ConfigMapVolumeSource(
+                    name="bronze-to-silver-script"
                 )
             )
         ],
