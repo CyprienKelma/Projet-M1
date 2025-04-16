@@ -35,7 +35,7 @@ with DAG("poc_pipeline",
         arguments=[ # setup de l'environnement dans le pod et exec du script
             "mkdir -p /tmp/.ivy2/local && chmod -R 777 /tmp/.ivy2 && "
             "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
-            "/opt/bitnami/python/bin/spark-submit "
+            "/opt/spark/bin/spark-submit "
             "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
             "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
             "--conf spark.jars.ivy=/tmp/.ivy2 "
