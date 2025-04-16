@@ -42,7 +42,6 @@ with DAG("poc_pipeline",
             "--conf spark.jars.ivy=/tmp/.ivy2 "
             "--conf spark.hadoop.security.authentication=NOSASL "
             "/opt/spark/scripts/bronze_to_silver.py"
-            "JAVA_HOME": "/opt/bitnami/java"
         ],
         name="spark-transform-job", # <-- nom du pod kubernetes 
         # (doit être unique pour pas avoir de conflit entre pods)
@@ -70,7 +69,8 @@ with DAG("poc_pipeline",
             "SPARK_LOCAL_DIRS": "/tmp",
             "HOME": "/tmp",
             "IVY_HOME": "/tmp/.ivy2",
-            "USER": "airflow"
+            "USER": "airflow",
+            "JAVA_HOME": "/opt/bitnami/java"
         }
     )
 
