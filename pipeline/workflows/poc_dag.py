@@ -20,27 +20,27 @@ with DAG("poc_pipeline",
     
     extract_from_neo4j = extract_neo4j_to_minio()
     
-    # transform_data = SparkKubernetesOperator(
-    #     task_id="spark_transform",
-    #     namespace="spark",
-    #     application_file="spark_jobs/demo_bronze_to_silver/poc-transform.yaml",
-    #     do_xcom_push=False,
-    # )
+    multi_transform_data = SparkKubernetesOperator(
+        task_id="spark_transform",
+        namespace="spark",
+        application_file="spark_jobs/demo_bronze_to_silver/poc-transform.yaml",
+        do_xcom_push=False,
+    )
 
-    transform_data = KubernetesPodOperator(
+    single_transform_data = KubernetesPodOperator(
         task_id="spark_transform",
         namespace="spark", # la ou on execute le pod
         image="cyprienklm/spark-airflow:3.4.0",
         cmds=["bash", "-c"],
         arguments=[ # setup de l'environnement dans le pod et exec du script
             "mkdir -p /tmp/.ivy2/local && chmod -R 777 /tmp/.ivy2 && "
-            "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
-            "/opt/bitnami/python/bin/spark-submit "
-            "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
-            "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
-            "--conf spark.jars.ivy=/tmp/.ivy2 "
-            "--conf spark.hadoop.security.authentication=NOSASL "
-            "/opt/spark/scripts/bronze_to_silver.py"
+        "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
+        "/opt/bitnami/python/bin/spark-submit "
+        "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+        "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+        "--conf spark.jars.ivy=/tmp/.ivy2 "
+        "--conf spark.hadoop.security.authentication=NOSASL "
+        "/opt/spark/scripts/bronze_to_silver.py"
         ],
         name="spark-transform-job", # <-- nom du pod kubernetes 
         # (doit être unique pour pas avoir de conflit entre pods)
@@ -79,4 +79,4 @@ with DAG("poc_pipeline",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_cassandra ,extract_from_neo4j] >> transform_data >> load_on_data_warehouse
+[extract_from_postgres, extract_from_cassandra ,extract_from_neo4j] >> [single_transform_data, multi_transform_data] >> load_on_data_warehouse
