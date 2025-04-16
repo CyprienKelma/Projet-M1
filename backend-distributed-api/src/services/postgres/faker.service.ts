@@ -55,8 +55,6 @@ export class FakerService {
       console.log(
         `✅ Group "${group.name}" with ${users.length} users created`,
       );
-
-      return group;
     }
   }
 }
