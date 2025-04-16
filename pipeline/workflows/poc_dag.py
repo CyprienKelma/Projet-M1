@@ -35,7 +35,8 @@ with DAG("poc_pipeline",
         arguments=[ # setup de l'environnement dans le pod et exec du script
             "mkdir -p /tmp/.ivy2/local && chmod -R 777 /tmp/.ivy2 && "
             "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
-            "/opt/spark/bin/spark-submit "
+            "export PATH=$PATH:/opt/bitnami/python/bin && "
+            "spark-submit "
             "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
             "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
             "--conf spark.jars.ivy=/tmp/.ivy2 "
@@ -78,4 +79,4 @@ with DAG("poc_pipeline",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_neo4j] >> transform_data >> load_on_data_warehouse
+[extract_from_postgres, extract_from_cassandra ,extract_from_neo4j] >> transform_data >> load_on_data_warehouse
