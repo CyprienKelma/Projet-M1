@@ -1,0 +1,15 @@
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("bronze-to-silver-demo") \
+    .config("spark.hadoop.fs.s3a.endpoint", "http://minio-tenant-hl.minio-tenant.svc.cluster.local:9000") \
+    .config("spark.hadoop.fs.s3a.access.key", "minio") \
+    .config("spark.hadoop.fs.s3a.secret.key", "minio123") \
+    .config("spark.hadoop.fs.s3a.path.style.access", "true") \
+    .getOrCreate()
+
+df = spark.read.csv("s3a://bronze/demo/users.csv", header=True)
+#df_clean = df.filter(df["email"].isNotNull())
+df.write.mode("overwrite").parquet("s3a://silver/demo/users_clean.parquet")
+
+print("Transfortmation réussie poru Bronze ---> Silver")

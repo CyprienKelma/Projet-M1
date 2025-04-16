@@ -7,19 +7,29 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: your-spark-image:latest
+  image: apache/spark-py:v3.4.0
   imagePullPolicy: IfNotPresent
-  mainApplicationFile: local:///app/bronze_to_silver.py
+  mainApplicationFile: local:///opt/spark/scripts/bronze_to_silver.py
   sparkVersion: "3.4.1"
   restartPolicy:
     type: Never
+  volumes:
+    - name: script-volume
+      configMap:
+        name: bronze-to-silver-script
   driver:
     cores: 1
     memory: 512m
     serviceAccount: spark
     labels:
-      version: 3.4.1
+      version: 3.4.0
+    volumeMounts:
+      - name: script-volume
+        mountPath: /opt/spark/scripts
   executor:
     cores: 1
     instances: 1
     memory: 1g
+    volumeMounts:
+      - name: script-volume
+        mountPath: /opt/spark/scripts
