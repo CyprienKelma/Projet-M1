@@ -44,14 +44,16 @@ with DAG("poc_pipeline",
             )
         ],
         # augmente la limite de fichier ouvert
-        security_context = k8s.V1SecurityContext(
-            run_as_user=1000,
-            fs_group=1000,
-            run_as_non_root=True,
-            capabilities=k8s.V1Capabilities(
-                add=["SYS_RESOURCE"]
+        security_context = [
+            k8s.V1SecurityContext(
+                run_as_user=1000,
+                fs_group=1000,
+                run_as_non_root=True,
+                capabilities=k8s.V1Capabilities(
+                    add=["SYS_RESOURCE"]
+                )
             )
-        )
+        ],
         volumes=[ # config du volume dans le pod
             k8s.V1Volume(
                 name="script-volume",
