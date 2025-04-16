@@ -10,16 +10,16 @@ from proof_of_concept.script.extract_load import extract_postgres_to_minio,extra
 
 
 
-pod_override = k8s.V1Pod(
-    spec=k8s.V1PodSpec(
-        containers=[],
-        security_context=k8s.V1PodSecurityContext(
-            run_as_user=1000,
-            run_as_group=1000,
-            fs_group=1000
-        )
-    )
-)
+pod_override = {
+    "spec": {
+        "securityContext": {
+            "runAsUser": 1000,
+            "runAsGroup": 1000,
+            "fsGroup": 1000
+        }
+    }
+}
+
 
 
 with DAG("poc_pipeline",
