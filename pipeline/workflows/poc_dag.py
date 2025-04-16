@@ -26,15 +26,13 @@ with DAG("poc_pipeline",
     #     application_file="spark_jobs/demo_bronze_to_silver/poc-transform.yaml",
     #     do_xcom_push=False,
     # )
-    
+
     transform_data = KubernetesPodOperator(
         task_id="spark_transform",
         namespace="spark", # la ou on execute le pod
         image="cyprienklm/spark-airflow:3.4.0",
         cmds=["bash", "-c"],
-        arguments=[
-            "USER=${USER:-airflow} && "
-            "echo \"$USER:x:1000:1000:$USER:/home/$USER:/bin/bash\" >> /etc/passwd && "
+        arguments=[ # setup de l'environnement dans le pod et exec du script
             "mkdir -p /tmp/.ivy2/local && chmod -R 777 /tmp/.ivy2 && "
             "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
             "/opt/spark/bin/spark-submit "
@@ -44,7 +42,8 @@ with DAG("poc_pipeline",
             "--conf spark.hadoop.security.authentication=NOSASL "
             "/opt/spark/scripts/bronze_to_silver.py"
         ],
-        name="spark-transform-job", # <-- du pod kubernetes (doit être unique !)
+        name="spark-transform-job", # <-- nom du pod kubernetes 
+        # (doit être unique pour pas avoir de conflit entre pods)
         is_delete_operator_pod=True, # delete à chaque fin de task
         get_logs=True, # dans l'ui d'airflow
         volume_mounts=[  # dit où le contenu de la ConfigMap sera monté dans le conteneur spark
