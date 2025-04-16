@@ -31,8 +31,10 @@ with DAG("poc_pipeline",
         task_id="spark_transform",
         namespace="spark", # la ou on execute le pod
         image="apache/spark-py:v3.4.0",
-        cmds=["/opt/spark/bin/spark-submit"],
-        arguments=["/opt/spark/scripts/bronze_to_silver.py"],
+        cmds=["bash", "-c"],
+        arguments=[
+            "mkdir -p /tmp/.ivy2 && /opt/spark/bin/spark-submit /opt/spark/scripts/bronze_to_silver.py"
+        ],
         name="spark-transform-job", # <-- du pod kubernetes (doit être unique !)
         is_delete_operator_pod=True, # delete à chaque fin de task
         get_logs=True, # dans l'ui d'airflow
