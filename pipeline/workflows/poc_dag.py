@@ -33,7 +33,14 @@ with DAG("poc_pipeline",
         image="apache/spark-py:v3.4.0",
         cmds=["bash", "-c"],
         arguments=[
-            "mkdir -p /tmp/.ivy2 && /opt/spark/bin/spark-submit /opt/spark/scripts/bronze_to_silver.py"
+            "mkdir -p /tmp/.ivy2/local && "
+            "chmod -R 777 /tmp/.ivy2 && "
+            "export IVY_HOME=/tmp/.ivy2 && "
+            "/opt/spark/bin/spark-submit "
+            "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+            "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+            "--conf spark.jars.ivy=/tmp/.ivy2 "
+            "/opt/spark/scripts/bronze_to_silver.py"
         ],
         name="spark-transform-job", # <-- du pod kubernetes (doit être unique !)
         is_delete_operator_pod=True, # delete à chaque fin de task
@@ -58,10 +65,8 @@ with DAG("poc_pipeline",
             "AWS_SECRET_ACCESS_KEY": "minio123",
             "AWS_ENDPOINT": "http://minio-tenant.minio-tenant.svc.cluster.local:9000",
             "SPARK_LOCAL_DIRS": "/tmp",
-            "HOME": "/tmp",  # Définir un HOME valide pour Ivy
-            "SPARK_DRIVER_JAVA_OPTS": "-Divy.home=/tmp/.ivy2",  # Configurer répertoire Ivy
-            "SPARK_EXECUTOR_JAVA_OPTS": "-Divy.home=/tmp/.ivy2",
-            "SPARK_CONF_DIR": "/tmp/spark-conf",
+            "HOME": "/tmp",
+            "IVY_HOME": "/tmp/.ivy2",
         },
     )
 
