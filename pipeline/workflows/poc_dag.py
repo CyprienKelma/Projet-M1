@@ -33,19 +33,19 @@ with DAG("poc_pipeline",
         image="apache/spark-py:v3.4.0",
         cmds=["bash", "-c"],
         arguments=[
-        "export USER=airflow && "
-        "echo \"${USER}:x:1000:1000:${USER}:/home/${USER}:/bin/bash\" >> /etc/passwd && "
-        "mkdir -p /tmp/.ivy2/local && "
-        "chmod -R 777 /tmp/.ivy2 && "
-        "export IVY_HOME=/tmp/.ivy2 && "
-        "export HOME=/tmp && "
-        "/opt/spark/bin/spark-submit "
-        "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
-        "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
-        "--conf spark.jars.ivy=/tmp/.ivy2 "
-        "--conf spark.hadoop.security.authentication=NOSASL "
-        "/opt/spark/scripts/bronze_to_silver.py"
-    ]
+            "export USER=airflow && "
+            "echo \"${USER}:x:1000:1000:${USER}:/home/${USER}:/bin/bash\" >> /etc/passwd && "
+            "mkdir -p /tmp/.ivy2/local && "
+            "chmod -R 777 /tmp/.ivy2 && "
+            "export IVY_HOME=/tmp/.ivy2 && "
+            "export HOME=/tmp && "
+            "/opt/spark/bin/spark-submit "
+            "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+            "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+            "--conf spark.jars.ivy=/tmp/.ivy2 "
+            "--conf spark.hadoop.security.authentication=NOSASL "
+            "/opt/spark/scripts/bronze_to_silver.py"
+        ],
         name="spark-transform-job", # <-- du pod kubernetes (doit être unique !)
         is_delete_operator_pod=True, # delete à chaque fin de task
         get_logs=True, # dans l'ui d'airflow
