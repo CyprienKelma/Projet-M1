@@ -33,7 +33,7 @@ with DAG("poc_pipeline",
         image="apache/spark-py:v3.4.0",
         cmds=["bash", "-c"],
         arguments=[
-            "adduser --disabled-password --gecos '' airflow && "
+            "echo 'airflow:x:1000:1000:airflow:/home/airflow:/bin/bash' >> /etc/passwd && "
             "export USER=airflow && "
             "mkdir -p /tmp/.ivy2/local && "
             "chmod -R 777 /tmp/.ivy2 && "
