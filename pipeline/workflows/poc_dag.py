@@ -52,7 +52,7 @@ with DAG("poc_pipeline",
                 add=["SYS_RESOURCE"]
             )
         )
-                volumes=[ # config du volume dans le pod
+        volumes=[ # config du volume dans le pod
             k8s.V1Volume(
                 name="script-volume",
                 config_map=k8s.V1ConfigMapVolumeSource(
