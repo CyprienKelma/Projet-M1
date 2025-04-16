@@ -42,6 +42,7 @@ with DAG("poc_pipeline",
             "--conf spark.jars.ivy=/tmp/.ivy2 "
             "--conf spark.hadoop.security.authentication=NOSASL "
             "/opt/spark/scripts/bronze_to_silver.py"
+            "JAVA_HOME": "/opt/bitnami/java"
         ],
         name="spark-transform-job", # <-- nom du pod kubernetes 
         # (doit être unique pour pas avoir de conflit entre pods)
