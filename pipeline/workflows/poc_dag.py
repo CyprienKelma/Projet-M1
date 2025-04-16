@@ -30,7 +30,7 @@ with DAG("poc_pipeline",
     transform_data = KubernetesPodOperator(
         task_id="spark_transform",
         namespace="spark", # la ou on execute le pod
-        image="cyprienklm/spark-py:v3.4.0",
+        image="cyprienklm/spark-airflow:3.4.0",
         cmds=["bash", "-c"],
         arguments=[
             "USER=${USER:-airflow} && "
