@@ -28,19 +28,19 @@ with DAG("poc_pipeline",
     # )
 
     single_transform_data = KubernetesPodOperator(
-        task_id="spark_transform_single",
+        task_id="spark_transform_single_pod",
         namespace="spark", # la ou on execute le pod
         image="cyprienklm/spark-airflow:3.4.0",
         cmds=["bash", "-c"],
         arguments=[ # setup de l'environnement dans le pod et exec du script
             "mkdir -p /tmp/.ivy2/local && chmod -R 777 /tmp/.ivy2 && "
-        "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
-        "/opt/bitnami/python/bin/spark-submit "
-        "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
-        "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
-        "--conf spark.jars.ivy=/tmp/.ivy2 "
-        "--conf spark.hadoop.security.authentication=NOSASL "
-        "/opt/spark/scripts/bronze_to_silver.py"
+            "export IVY_HOME=/tmp/.ivy2 && export HOME=/tmp && "
+            "$(which spark-submit) "
+            "--conf spark.driver.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+            "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
+            "--conf spark.jars.ivy=/tmp/.ivy2 "
+            "--conf spark.hadoop.security.authentication=NOSASL "
+            "/opt/spark/scripts/bronze_to_silver.py"
         ],
         name="spark-transform-job", # <-- nom du pod kubernetes 
         # (doit être unique pour pas avoir de conflit entre pods)
@@ -57,7 +57,6 @@ with DAG("poc_pipeline",
             k8s.V1Volume(
                 name="script-volume",
                 config_map=k8s.V1ConfigMapVolumeSource(
-                    name="bronze-to-silver-script"
                 )
             )
         ],
