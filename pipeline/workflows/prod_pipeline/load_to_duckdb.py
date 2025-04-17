@@ -12,6 +12,7 @@ def load_to_duckdb(**context):
     import pandas as pd
     from minio import Minio
     from io import BytesIO
+    import os
 
     ds = context["ds"]
 
@@ -31,7 +32,11 @@ def load_to_duckdb(**context):
     activity_df = read_parquet("gold", f"global_user_activity_per_day/{ds}/global_user_activity_per_day.parquet")
 
     # Connexion au fichier DuckDB
-    conn = duckdb.connect("/opt/duckdb/analytics.duckdb")
+    duckdb_path = "/opt/duckdb/analytics.duckdb"
+    os.makedirs(os.path.dirname(duckdb_path), exist_ok=True)
+
+    conn = duckdb.connect(duckdb_path)
+
 
 
     # Créer les tables si elles n’existent pas encore
