@@ -1,29 +1,32 @@
-from airflow import DAG
 from airflow.decorators import task
 from datetime import datetime
 
 
 @task.virtualenv(
     use_dill=True,
-    requirements=["pyspark", "minio"],
+    requirements=["minio", "pandas"],
     system_site_packages=False,
 )
 def transform_bronze_to_silver():
-    from pyspark.sql import SparkSession
     from minio import Minio
+    import pandas as pd
 
-    spark = SparkSession.builder \
-        .appName("bronze-to-silver-local") \
-        .master("local[*]") \
-        .config("spark.hadoop.fs.s3a.endpoint", "http://minio-tenant-hl.minio-tenant.svc.cluster.local:9000") \
-        .config("spark.hadoop.fs.s3a.access.key", "minio") \
-        .config("spark.hadoop.fs.s3a.secret.key", "minio123") \
-        .config("spark.hadoop.fs.s3a.path.style.access", "true") \
-        .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false") \
-        .getOrCreate()
+    client = Minio(
+        "minio-tenant-hl.minio-tenant.svc.cluster.local:9000",
+        access_key="minio",
+        secret_key="minio123",
+        secure=False,
+    )
+    path = "/tmp/users.csv"
+    client.fget_object("bronze", "demo/users.csv", path)
 
-    df = spark.read.csv("s3a://bronze/demo/users.csv", header=True)
-    df_clean = df.filter(df["email"].isNotNull())
-    df_clean.write.mode("overwrite").parquet("s3a://silver/demo/users_clean.parquet")
+    df = pd.read_csv(path)
+    df_clean = df[df["email"].notnull()]
+    out_path = "/tmp/users_clean.parquet"
+    df_clean.to_parquet(out_path)
 
-    print("Transformation Spark locale terminée")
+    if not client.bucket_exists("silver"):
+        client.make_bucket("silver")
+    client.fput_object("silver", "demo/users_clean.parquet", out_path)
+
+    print("Transformation pandas vers parquet OK")
