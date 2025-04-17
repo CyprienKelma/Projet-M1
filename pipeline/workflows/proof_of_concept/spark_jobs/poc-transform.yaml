@@ -7,10 +7,10 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: apache/spark-py:v3.4.0
+  image: spark:3.5.5
   imagePullPolicy: IfNotPresent
-  mainApplicationFile: local:///opt/spark/scripts/bronze_to_silver.py
-  sparkVersion: "3.4.0"
+  mainApplicationFile: https://raw.githubusercontent.com/CyprienKelma/Projet-M1/refs/heads/pipeline-dev/pipeline/workflows/proof_of_concept/script/bronze_to_silver.py
+  sparkVersion: "3.5.5"
   restartPolicy:
     type: Never
   volumes:
@@ -23,9 +23,9 @@ spec:
     serviceAccount: spark
     labels:
       version: 3.4.0
-    volumeMounts:
-      - name: script-volume
-        mountPath: /opt/spark/scripts
+    # volumeMounts:
+    #   - name: script-volume
+    #     mountPath: /opt/spark/scripts
     env:
       - name: AWS_ACCESS_KEY_ID
         value: "minio"
@@ -37,9 +37,9 @@ spec:
     cores: 1
     instances: 1
     memory: 1g
-    volumeMounts:
-      - name: script-volume
-        mountPath: /opt/spark/scripts
+    # volumeMounts:
+    #   - name: script-volume
+    #     mountPath: /opt/spark/scripts
     env:
       - name: AWS_ACCESS_KEY_ID
         value: "minio"
