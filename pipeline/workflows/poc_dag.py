@@ -5,6 +5,7 @@ from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKu
 #from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 
 from datetime import datetime
+from proof_of_concept.script.bronze_to_silver import transform_bronze_to_silver
 from proof_of_concept.script.extract_load import extract_postgres_to_minio,extract_cassandra_tables_to_minio,load_to_duckdb,extract_neo4j_to_minio
 #from pipeline.dags.proof_of_concept.script.extract_load import extract_postgres_to_minio,extract_cassandra_tables_to_minio,load_to_duckdb
 
@@ -19,13 +20,15 @@ with DAG("poc_pipeline",
     extract_from_cassandra = extract_cassandra_tables_to_minio()
     
     extract_from_neo4j = extract_neo4j_to_minio()
+
+    local_transform_bronze_to_silver = transform_bronze_to_silver()
     
-    multi_transform_data = SparkKubernetesOperator(
-        task_id="spark_transform_multi",
-        namespace="spark",
-        application_file="proof_of_concept/spark_jobs/poc-transform.yaml",
-        do_xcom_push=False,
-    )
+    # multi_transform_data = SparkKubernetesOperator(
+    #     task_id="spark_transform_multi",
+    #     namespace="spark",
+    #     application_file="proof_of_concept/spark_jobs/poc-transform.yaml",
+    #     do_xcom_push=False,
+    # )
 
     # single_transform_data = KubernetesPodOperator(
     #     task_id="spark_transform_single_pod",
@@ -80,4 +83,4 @@ with DAG("poc_pipeline",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_cassandra, extract_from_neo4j] >> multi_transform_data >> load_on_data_warehouse
+[extract_from_postgres, extract_from_cassandra, extract_from_neo4j] >> local_transform_bronze_to_silver >> load_on_data_warehouse
