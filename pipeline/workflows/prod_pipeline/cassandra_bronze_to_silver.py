@@ -3,7 +3,7 @@ from datetime import datetime
 
 @task.virtualenv(
     use_dill=True,
-    requirements=["pandas", "minio"],
+    requirements=["pandas", "minio", "pyarrow"],
     system_site_packages=False,
 )
 def transform_cassandra_bronze_to_silver():
