@@ -32,7 +32,12 @@ def load_to_duckdb(**context):
     activity_df = read_parquet("gold", f"global_user_activity_per_day/{ds}/global_user_activity_per_day.parquet")
 
     # Connexion au fichier DuckDB
-    conn = duckdb.connect("/opt/duckdb/analytics.duckdb")
+
+    duckdb_path = "/opt/duckdb/analytics.duckdb"
+    if not os.path.exists(duckdb_path):
+        conn_init = duckdb.connect(duckdb_path)
+        conn_init.close()
+    conn = duckdb.connect(duckdb_path)
 
 
 
