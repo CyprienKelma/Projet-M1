@@ -30,9 +30,9 @@ def transform_silver_to_user_activity(**context):
         return pd.read_parquet(BytesIO(response.read()))
 
     # Récupération des datasets
-    sessions = read_parquet("silver", f"user_session_events/{ds}/user_session_events.parquet")
-    messages = read_parquet("silver", f"group_messages/{ds}/group_messages.parquet")
-    purchases = read_parquet("silver", f"user_purchases/{ds}/user_purchases.parquet")
+    sessions = read_parquet("silver", f"user_session_events/{ds}/user_session_events_clean.parquet")
+    messages = read_parquet("silver", f"group_messages/{ds}/group_messages_clean.parquet")
+    purchases = read_parquet("silver", f"user_purchases/{ds}/user_purchases_clean.parquet")
 
     # Connexions et temps passé
     sessions["event_time"] = pd.to_datetime(sessions["event_time"])

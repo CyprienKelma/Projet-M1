@@ -41,12 +41,18 @@ with DAG("prod_pipeline",
     load_gold_to_duckdb = load_to_duckdb()
 
 # DAG steps order :
+# Extraction vers bronze
 extract_daily_from_postgres >> transform_task_postgres_bronze_to_silver
 extract_daily_from_cassandra >> transform_task_cassandra_bronze_to_silver
-extract_daily_from_neo4j >> [transform_task_postgres_bronze_to_silver, transform_task_cassandra_bronze_to_silver]
+extract_daily_from_neo4j >> transform_task_postgres_bronze_to_silver
+extract_daily_from_neo4j >> transform_task_cassandra_bronze_to_silver
 
-transform_task_postgres_bronze_to_silver >> [transform_task_silver_to_notif_impact, transform_task_silver_to_user_activity]
-transform_task_cassandra_bronze_to_silver >> [transform_task_silver_to_notif_impact, transform_task_silver_to_user_activity]
+# Bronze vers gold
+transform_task_postgres_bronze_to_silver >> transform_task_silver_to_notif_impact
+transform_task_postgres_bronze_to_silver >> transform_task_silver_to_user_activity
+transform_task_cassandra_bronze_to_silver >> transform_task_silver_to_notif_impact
+transform_task_cassandra_bronze_to_silver >> transform_task_silver_to_user_activity
 
+# Gold vers data warehouse
 transform_task_silver_to_notif_impact >> load_gold_to_duckdb
 transform_task_silver_to_user_activity >> load_gold_to_duckdb

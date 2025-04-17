@@ -32,9 +32,9 @@ def transform_silver_to_notif_impact(**context):
         return pd.read_parquet(BytesIO(response.read()))
 
     # Charger les datasets silver nécessaires
-    notif_states = read_parquet_from_minio("silver", f"notification_states/{ds}/notification_states.parquet")
-    user_notifs = read_parquet_from_minio("silver", f"user_notifications/{ds}/user_notifications.parquet")
-    sessions = read_parquet_from_minio("silver", f"user_session_events/{ds}/user_session_events.parquet")
+    notif_states = read_parquet_from_minio("silver", f"notification_states/{ds}/notification_states_clean.parquet")
+    user_notifs = read_parquet_from_minio("silver", f"user_notifications/{ds}/user_notifications_clean.parquet")
+    sessions = read_parquet_from_minio("silver", f"user_session_events/{ds}/user_session_events_clean.parquet")
 
     # Préparation des données
     notif_states["notif_date"] = pd.to_datetime(notif_states["updated_at"]).dt.date
