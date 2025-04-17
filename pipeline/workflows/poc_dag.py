@@ -40,6 +40,7 @@ with DAG("poc_pipeline",
             "--conf spark.executor.extraJavaOptions=-Divy.home=/tmp/.ivy2 "
             "--conf spark.jars.ivy=/tmp/.ivy2 "
             "--conf spark.hadoop.security.authentication=NOSASL "
+            "--conf spark.hadoop.fs.s3a.connection.ssl.enabled=false "
             "/opt/spark/scripts/bronze_to_silver.py"
         ],
         name="spark-transform-job", # <-- nom du pod kubernetes 
@@ -64,7 +65,7 @@ with DAG("poc_pipeline",
         env_vars={ # pour que spark se co à minio
             "AWS_ACCESS_KEY_ID": "minio",
             "AWS_SECRET_ACCESS_KEY": "minio123",
-            "AWS_ENDPOINT": "https://minio-tenant.minio-tenant.svc.cluster.local:9000",
+            "AWS_ENDPOINT": "http://minio-tenant.minio-tenant.svc.cluster.local:9000",
             "SPARK_LOCAL_DIRS": "/tmp",
             "HOME": "/tmp",
             "IVY_HOME": "/tmp/.ivy2",
