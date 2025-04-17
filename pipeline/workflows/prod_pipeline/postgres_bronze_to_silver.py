@@ -7,9 +7,12 @@ from airflow.decorators import task
 )
 def transform_postgres_bronze_to_silver():
     import pandas as pd
+    from pandas import Timestamp
     from minio import Minio
     from datetime import datetime
     import os
+
+    today_utc = Timestamp.now(tz="UTC")
 
     client = Minio(
         "minio-tenant-hl.minio-tenant.svc.cluster.local:9000",
@@ -38,16 +41,16 @@ def transform_postgres_bronze_to_silver():
     df_users = read_bronze("users")
     df_users = df_users.dropna(subset=["email"])
     df_users = df_users.drop_duplicates(subset="email")
-    df_users["created_at"] = pd.to_datetime(df_users["created_at"], errors="coerce")
-    df_users = df_users[df_users["created_at"] <= pd.Timestamp.today()]
+    df_users["created_at"] = pd.to_datetime(df_users["created_at"], errors="coerce", utc=True)
+    df_users = df_users[df_users["created_at"] <= today_utc]
     save_clean(df_users, "users")
 
     # GROUPS
     df_groups = read_bronze("groups")
     df_groups = df_groups.dropna(subset=["name"])
     df_groups = df_groups.drop_duplicates(subset="name")
-    df_groups["created_at"] = pd.to_datetime(df_groups["created_at"], errors="coerce")
-    df_groups = df_groups[df_groups["created_at"] <= pd.Timestamp.today()]
+    df_groups["created_at"] = pd.to_datetime(df_groups["created_at"], errors="coerce", utc=True)
+    df_groups = df_groups[df_groups["created_at"] <= today_utc]
     save_clean(df_groups, "groups")
 
     # GROUPS_USERS_USER (bridge table)
