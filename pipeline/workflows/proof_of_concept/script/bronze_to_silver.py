@@ -4,7 +4,7 @@ from datetime import datetime
 
 @task.virtualenv(
     use_dill=True,
-    requirements=["minio", "pandas"],
+    requirements=["minio", "pandas", "pyarrow"],
     system_site_packages=False,
 )
 def transform_bronze_to_silver():
