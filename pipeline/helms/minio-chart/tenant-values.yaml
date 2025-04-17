@@ -14,5 +14,7 @@ tenant:
       size: 5Gi
       storageClassName: local-path
 
+  requestAutoCert: false
+
   mountPath: /export
   requestAutoCert: true
