@@ -7,7 +7,7 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: spark:3.5.5
+  image: "openlake/spark:3.5.5"
   imagePullPolicy: IfNotPresent
   mainApplicationFile: https://raw.githubusercontent.com/CyprienKelma/Projet-M1/refs/heads/pipeline-dev/pipeline/workflows/proof_of_concept/script/bronze_to_silver.py
   sparkVersion: "3.5.5"
