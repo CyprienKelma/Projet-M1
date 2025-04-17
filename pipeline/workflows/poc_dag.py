@@ -78,7 +78,7 @@ with DAG("poc_pipeline",
     # )
 
     transform = KubernetesPodOperator(
-        task_id="transform_bronze_to_silver",
+        task_id="docker_transform",
         name="spark-local-transform",
         namespace="airflow",
         image="cyprienklm/airflow-spark-local:latest",
