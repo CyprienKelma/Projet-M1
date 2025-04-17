@@ -43,9 +43,10 @@ def extract_postgres_to_minio():
         secure=True,
         cert_check=False
     )
-    if not client.bucket_exists("poc-data"):
-        client.make_bucket("poc-data")
-    client.fput_object("poc-data", "demo/users.csv", path)
+    if not client.bucket_exists("bronze"):
+        client.make_bucket("bronze")
+    
+    client.fput_object("bronze", "demo/users.csv", path)
 
 
 @task.virtualenv(
@@ -78,8 +79,8 @@ def extract_cassandra_tables_to_minio():
 
     print("Cassandra")
 
-    if not client.bucket_exists("poc-data"):
-        client.make_bucket("poc-data")
+    if not client.bucket_exists("bronze"):
+        client.make_bucket("bronze")
 
     for table in TABLES:
         print(f"[...] Extracting {table} from Cassandra")
@@ -90,8 +91,8 @@ def extract_cassandra_tables_to_minio():
         minio_path = f"demo/{table}.csv"
 
         df.to_csv(local_path, index=False)
-        client.fput_object("poc-data", minio_path, local_path)
-        print(f"[✓] Uploaded {table}.csv to MinIO bucket 'poc-data'")
+        client.fput_object("bronze", minio_path, local_path)
+        print(f"[✓] Uploaded {table}.csv to MinIO bucket 'bronze'")
 
 
 
@@ -119,8 +120,8 @@ def extract_neo4j_to_minio():
         cert_check=False
     )
 
-    if not client.bucket_exists("poc-data"):
-        client.make_bucket("poc-data")
+    if not client.bucket_exists("bronze"):
+        client.make_bucket("bronze")
 
     with driver.session() as session:
         result = session.run("MATCH (n) RETURN n")
@@ -131,8 +132,8 @@ def extract_neo4j_to_minio():
     minio_path = "demo/neo4j_data.csv"
 
     df.to_csv(local_path, index=False)
-    client.fput_object("poc-data", minio_path, local_path)
-    print(f"[✓] Uploaded neo4j_data.csv to MinIO bucket 'poc-data'")
+    client.fput_object("bronze", minio_path, local_path)
+    print(f"[✓] Uploaded neo4j_data.csv to MinIO bucket 'bronze'")
 
 @task.virtualenv(
     use_dill=True,
@@ -143,6 +144,6 @@ def load_to_duckdb():
     import pandas as pd
     import duckdb
 
-    df = pd.read_parquet("s3a://transformed/demo/users_clean.parquet")
+    df = pd.read_parquet("s3a://silver/demo/users_clean.parquet")
     conn = duckdb.connect("/tmp/duckdb/analytics.duckdb")
     conn.execute("CREATE TABLE IF NOT EXISTS users AS SELECT * FROM df")
