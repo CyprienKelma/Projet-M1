@@ -41,10 +41,24 @@ def transform_silver_to_notif_impact(**context):
     user_notifs["notif_date"] = pd.to_datetime(user_notifs["notification_time"]).dt.date
 
     # Supposons que si status == 'seen' c’est un succès
-    notif_states["is_success"] = notif_states["status"].str.lower() == "seen"
+    merged = pd.merge(
+        notif_states,
+        user_notifs,
+        how="left",
+        left_on=["notification_id", "user_id"],
+        right_on=["notification_id", "user_id"]
+    )
 
-    # Merge notifications (content) + état (vu ou pas)
-    merged = pd.merge(notif_states, user_notifs, how="left", left_on=["notification_id", "user_id"], right_on=["notification_id", "user_id"])
+    # Vérifie les colonnes après le merge
+    # print("Colonnes après merge:", merged.columns.tolist())
+
+    # Choisis la colonne notif_date à garder (celle de notif_states)
+    if "notif_date_x" in merged.columns:
+        merged = merged.rename(columns={"notif_date_x": "notif_date"})
+    elif "notif_date" not in merged.columns:
+        merged["notif_date"] = pd.to_datetime(merged["updated_at"]).dt.date
+
+    # Maintenant, tu peux sélectionner les colonnes
     merged = merged[["user_id", "content", "notif_date", "is_success"]].rename(columns={"content": "content_notif"})
 
     # Temps passé après la notif
