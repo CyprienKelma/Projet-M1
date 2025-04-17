@@ -30,7 +30,7 @@ with DAG("poc_pipeline",
     single_transform_data = KubernetesPodOperator(
         task_id="spark_transform_single_pod",
         namespace="spark", # la ou on execute le pod
-        image="cyprienklm/spark-airflow:3.4.0",
+        image="cyprienklm/spark-airflow:latest",
         cmds=["bash", "-c"],
         arguments=[ # setup de l'environnement dans le pod et exec du script
             "mkdir -p /tmp/.ivy2/local && chmod -R 777 /tmp/.ivy2 && "
@@ -42,7 +42,7 @@ with DAG("poc_pipeline",
             "--conf spark.hadoop.security.authentication=NOSASL "
             "/opt/spark/scripts/bronze_to_silver.py"
         ],
-        name="spark-transform-job", # <-- nom du pod kubernetes 
+        name=f"spark-transform-job-{{{{ ts_nodash }}}}", # <-- nom du pod kubernetes 
         # (doit être unique pour pas avoir de conflit entre pods)
         is_delete_operator_pod=True, # delete à chaque fin de task
         get_logs=True, # dans l'ui d'airflow
@@ -69,7 +69,7 @@ with DAG("poc_pipeline",
             "HOME": "/tmp",
             "IVY_HOME": "/tmp/.ivy2",
             "USER": "airflow",
-            "JAVA_HOME": "/opt/bitnami/java"
+            #"JAVA_HOME": "/opt/bitnami/java"
         }
     )
 
