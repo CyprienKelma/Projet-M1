@@ -76,11 +76,11 @@ with DAG("poc_pipeline",
     #         #"JAVA_HOME": "/opt/bitnami/java"
     #     }
     # )
-    
+
 
     load_on_data_warehouse = PythonOperator(
         task_id="load_to_duckdb",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_cassandra, extract_from_neo4j] >> transform >> load_on_data_warehouse
+[extract_from_postgres, extract_from_cassandra, extract_from_neo4j] >> local_transform_bronze_to_silver >> load_on_data_warehouse
