@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 
 spark = SparkSession.builder \
     .appName("bronze-to-silver-demo") \
-    .config("spark.hadoop.fs.s3a.endpoint", "http://minio-exposed:9000") \
+    .config("spark.hadoop.fs.s3a.endpoint", "http://minio-tenant-pool-0-0.minio-tenant-hl.minio-tenant.svc.cluster.local:9000") \
     .config("spark.hadoop.fs.s3a.access.key", "minio") \
     .config("spark.hadoop.fs.s3a.secret.key", "minio123") \
     .config("spark.hadoop.fs.s3a.path.style.access", "true") \
