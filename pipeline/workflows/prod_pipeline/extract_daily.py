@@ -31,65 +31,43 @@ def extract_postgres_to_bronze_bucket():
     if not client.bucket_exists("bronze"):
         client.make_bucket("bronze")
 
-    TABLES = ["users", "groups", "activities"]
+    TABLES_WITH_DATE = {
+        "users": "created_at",
+        "groups": "created_at",
+        "activities": "created_at",
+        "notification_states": "updated_at"
+    }
+    TABLES_NO_DATE = ["groups_users_user"]
     today = datetime.today().strftime("%Y-%m-%d")
-    batch_size = 10000
 
-    for table in TABLES:
-        offset = 0
-        batch_num = 0
+    # Tables avec filtre par date
+    for table, date_col in TABLES_WITH_DATE.items():
+        print(f"[INFO] Extracting {table} with filter on {date_col}")
+        query = f"SELECT * FROM {table} WHERE DATE({date_col}) = '{today}'"
+        df = pd.read_sql(query, conn)
 
-        while True:
-            print(f"[INFO] Extracting {table} from Postgres at batch {batch_num}...")
-            query = f"SELECT * FROM {table} WHERE DATE(created_at) = '{today}' LIMIT {batch_size} OFFSET {offset}"
-            df = pd.read_sql(query, conn)
-            if df.empty:
-                break
-
-            local_path = f"/tmp/{table}_batch{batch_num}.csv"
-            minio_path = f"{table}/{today}/{table}_batch{batch_num}.csv"
-
+        if not df.empty:
+            local_path = f"/tmp/{table}.csv"
+            minio_path = f"{table}/{today}/{table}.csv"
             df.to_csv(local_path, index=False)
             client.fput_object("bronze", minio_path, local_path)
+            print(f"[UPLOAD] {table}.csv uploaded to bronze/{table}/{today}/")
+        else:
+            print(f"[SKIP] {table}: no data for {today}")
 
-            print(f"Batch {batch_num} de {table} uploaded dans : bronze/{table}/{today}/")
+    # Tables sans filtre
+    for table in TABLES_NO_DATE:
+        print(f"[INFO] Extracting {table} (full table)")
+        df = pd.read_sql(f"SELECT * FROM {table}", conn)
 
-            offset += batch_size
-            batch_num += 1
-
-    table = "groups_users_user"
-    offset = 0
-    batch_num = 0
-    while True:
-        print(f"[INFO] Extracting {table} from Postgres at batch {batch_num}...")
-        query = f"SELECT * FROM {table} LIMIT {batch_size} OFFSET {offset}"
-        df = pd.read_sql(query, conn)
-        if df.empty:
-            break
-        local_path = f"/tmp/{table}_batch{batch_num}.csv"
-        minio_path = f"{table}/{today}/{table}_batch{batch_num}.csv"
-        df.to_csv(local_path, index=False)
-        client.fput_object("bronze", minio_path, local_path)
-        print(f"Batch {batch_num} de {table} uploaded dans : bronze/{table}/{today}/")
-        offset += batch_size
-        batch_num += 1
-
-    table = "notification_states"
-    offset = 0
-    batch_num = 0
-    while True:
-        print(f"[INFO] Extracting {table} from Postgres at batch {batch_num}...")
-        query = f"SELECT * FROM {table} WHERE DATE(updated_at) = '{today}' LIMIT {batch_size} OFFSET {offset}"
-        df = pd.read_sql(query, conn)
-        if df.empty:
-            break
-        local_path = f"/tmp/{table}_batch{batch_num}.csv"
-        minio_path = f"{table}/{today}/{table}_batch{batch_num}.csv"
-        df.to_csv(local_path, index=False)
-        client.fput_object("bronze", minio_path, local_path)
-        print(f"Batch {batch_num} de {table} uploaded dans : bronze/{table}/{today}/")
-        offset += batch_size
-        batch_num += 1
+        if not df.empty:
+            local_path = f"/tmp/{table}.csv"
+            minio_path = f"{table}/{today}/{table}.csv"
+            df.to_csv(local_path, index=False)
+            client.fput_object("bronze", minio_path, local_path)
+            print(f"[UPLOAD] {table}.csv uploaded to bronze/{table}/{today}/")
+        else:
+            print(f"[SKIP] {table}: empty")
 
 
 @task.virtualenv(
