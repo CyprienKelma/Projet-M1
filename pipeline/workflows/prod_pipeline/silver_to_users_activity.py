@@ -11,9 +11,8 @@ def transform_silver_to_user_activity(**context):
     import pandas as pd
     from minio import Minio
     from io import BytesIO
-    from datetime import timedelta
+    from datetime import timedelta, datetime
     import os
-    from datetime import datetime
 
     ds = context["ds"]
     today = datetime.strptime(ds, "%Y-%m-%d").date()
