@@ -77,10 +77,45 @@ with DAG("poc_pipeline",
     #     }
     # )
 
+    transform = KubernetesPodOperator(
+        task_id="transform_bronze_to_silver",
+        name="spark-local-transform",
+        namespace="airflow",
+        image="cyprienklm/airflow-spark-local:latest",
+        cmds=["python", "-c"],
+        arguments=[
+                    """
+            from pyspark.sql import SparkSession
+            from minio import Minio
+            import pandas as pd
+
+            spark = SparkSession.builder \
+                .appName("bronze-to-silver") \
+                .master("local[*]") \
+                .config("spark.hadoop.fs.s3a.endpoint", "http://minio-tenant-hl.minio-tenant.svc.cluster.local:9000") \
+                .config("spark.hadoop.fs.s3a.access.key", "minio") \
+                .config("spark.hadoop.fs.s3a.secret.key", "minio123") \
+                .config("spark.hadoop.fs.s3a.path.style.access", "true") \
+                .config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false") \
+                .getOrCreate()
+
+            df = spark.read.csv("s3a://bronze/demo/users.csv", header=True)
+            df_clean = df.filter(df["email"].isNotNull())
+            df_clean.write.mode("overwrite").parquet("s3a://silver/demo/users_clean.parquet")
+            print("Transformation terminée")
+            """
+        ],
+        get_logs=True,
+        is_delete_operator_pod=True,
+        env_vars={
+            "AWS_ACCESS_KEY_ID": "minio",
+            "AWS_SECRET_ACCESS_KEY": "minio123"
+        }
+    )
 
     load_on_data_warehouse = PythonOperator(
         task_id="load_to_duckdb",
         python_callable=load_to_duckdb
     )
 
-[extract_from_postgres, extract_from_cassandra, extract_from_neo4j] >> local_transform_bronze_to_silver >> load_on_data_warehouse
+[extract_from_postgres, extract_from_cassandra, extract_from_neo4j] >> transform >> load_on_data_warehouse

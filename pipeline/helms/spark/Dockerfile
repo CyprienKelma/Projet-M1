@@ -1,14 +1,14 @@
 FROM bitnami/spark:latest
 
-USER root
+# Facultatif : install autres paquets utiles si tu veux
+# RUN apt-get update && apt-get install -y <outils>
 
-# Ajout des JARs pour accès MinIO via s3a://
-ADD https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar /opt/bitnami/spark/jars/
-ADD https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar /opt/bitnami/spark/jars/
+# Définir les variables d'environnement nécessaires
+ENV SPARK_HOME=/opt/bitnami/spark
+ENV JAVA_HOME=/opt/bitnami/java
+ENV PATH="$SPARK_HOME/bin:$JAVA_HOME/bin:$PATH"
 
-# (Facultatif) Install de pyspark côté Python si besoin
+# (Optionnel) Installer pyspark si tu veux avoir accès aux modules Python côté Airflow (pas nécessaire pour Spark en lui-même)
 RUN pip install pyspark
 
-# Repasse sur utilisateur non-root
-RUN useradd -m airflow
-USER airflow
+# Tu peux
