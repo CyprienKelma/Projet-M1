@@ -8,7 +8,7 @@ spec:
   pythonVersion: "3"
   mode: cluster
   image: "openlake/spark:latest"
-  imagePullPolicy: IfNotPresent
+  imagePullPolicy: Always
   mainApplicationFile: https://raw.githubusercontent.com/CyprienKelma/Projet-M1/refs/heads/pipeline-dev/pipeline/workflows/proof_of_concept/script/bronze_to_silver.py
   sparkVersion: "latest"
   restartPolicy:
