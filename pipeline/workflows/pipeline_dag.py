@@ -26,19 +26,19 @@ with DAG("prod_pipeline",
 
 
     # (2) Nettoyage/harmonisation vers le bucket silver :
-    transform_postgres_bronze_to_silver = transform_postgres_bronze_to_silver()
-    transform_cassandra_bronze_to_silver = transform_cassandra_bronze_to_silver()
+    transform_task_postgres_bronze_to_silver = transform_postgres_bronze_to_silver()
+    transform_task_cassandra_bronze_to_silver = transform_cassandra_bronze_to_silver()
 
 
     # (3) Transformation vers le bucket gold :
     # 1ère table gold
-    transform_silver_to_notif_impact = transform_silver_to_notif_impact()
+    transform_task_silver_to_notif_impact = transform_silver_to_notif_impact()
     # 2ème table gold
-    transform_silver_to_user_activity = transform_silver_to_user_activity()
+    transform_task_silver_to_user_activity = transform_silver_to_user_activity()
 
 
     # (4) Chargement des tables vers le data warehouse :
     load_gold_to_duckdb = load_to_duckdb()
 
 # DAG steps order :
-[extract_daily_from_postgres, extract_daily_from_cassandra, extract_daily_from_neo4j] >> transform_postgres_bronze_to_silver >> transform_cassandra_bronze_to_silver >> [transform_silver_to_notif_impact, transform_silver_to_user_activity] >> load_gold_to_duckdb
+[extract_daily_from_postgres, extract_daily_from_cassandra, extract_daily_from_neo4j] >> transform_task_postgres_bronze_to_silver >> transform_task_cassandra_bronze_to_silver >> [transform_task_silver_to_notif_impact, transform_task_silver_to_user_activity] >> load_gold_to_duckdb
