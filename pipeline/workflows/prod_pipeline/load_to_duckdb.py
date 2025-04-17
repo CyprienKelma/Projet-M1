@@ -34,7 +34,7 @@ def load_to_duckdb(**context):
     # Connexion au fichier DuckDB
 
         
-    duckdb_path = "/opt/duckdb/analytics.duckdb"
+    duckdb_path = "/opt/airflow/duckdb/analytics.duckdb"
 
     # 1. Crée le dossier s'il n'existe pas (ce n'est pas le fichier !)
     os.makedirs(os.path.dirname(duckdb_path), exist_ok=True)
