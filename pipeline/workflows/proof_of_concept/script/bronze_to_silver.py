@@ -26,4 +26,4 @@ def transform_bronze_to_silver():
     df_clean = df.filter(df["email"].isNotNull())
     df_clean.write.mode("overwrite").parquet("s3a://silver/demo/users_clean.parquet")
 
-    print("✔️ Transformation Spark locale terminée")
+    print("Transformation Spark locale terminée")
