@@ -1,35 +1,39 @@
-# from airflow import DAG
-# from airflow.operators.python import PythonOperator
-# from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
-# from datetime import datetime
-# from proof_of_concept.script.extract_load import extract_postgres_to_minio, extract_cassandra_tables_to_minio, load_to_duckdb
+from airflow import DAG
+from kubernetes.client import models as k8s
+from airflow.operators.python import PythonOperator
+from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator, KubernetesPodOperator
+#from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
+
+from datetime import datetime
+from prod_pipeline.extract_daily import extract_postgres_to_bronze_bucket, extract_cassandra_tables_to_bronze_bucket
+from proof_of_concept.script.extract_load import extract_neo4j_to_minio
+
+with DAG("prod_pipeline",
+         start_date=datetime(2024, 1, 1),
+         schedule_interval="@daily", # chaque jours
+         catchup=False) as dag:
 
 
-# with DAG("prod_pipeline",
-#          start_date=datetime(2024, 1, 1),
-#          schedule_interval=None,
-#          catchup=False) as dag: 
+    # (1) Extract vers le bucket bronze :
+    extract_daily_from_postgres = extract_postgres_to_bronze_bucket()
+    extract_daily_from_cassandra = extract_cassandra_tables_to_bronze_bucket()
+    extract_daily_from_neo4j = extract_neo4j_to_minio()
 
-#     extract_from_postgres = PythonOperator(
-#         task_id="extract_postgres_to_minio",
-#         python_callable=extract_postgress_to_minio
-#     )
 
-#     extract_from_cassandra = PythonOperator(
-#         task_id="extract_cassandra_to_minio",
-#         python_callable=extract_cassandra_tables_to_minio
-#    )
-    
-#     transform_data = SparkKubernetesOperator(
-#         task_id="spark_transform",
-#         namespace="spark",
-#         application_file="spark_jobsdemo_bronze_to_silver/poc-transform.yaml",
-#         do_xcom_push=False,
-#     )
+    # (2) Nettoyage/harmonisation vers le bucket silver :
+    transform_postgres_bronze_to_silver = transform_postgres_bronze_to_silver()
+    transform_cassandra_bronze_to_silver = transform_cassandra_bronze_to_silver()
 
-#     load_on_data_warehouse = PythonOperator(
-#         task_id="load_to_duckdb",
-#         python_callable=load_to_duckdb
-#     )
 
-# [extract_from_postgres, extract_from_cassandra] >> transform_data >> load_on_data_warehouse
+    # (3) Transformation vers le bucket gold :
+    # 1ère table gold
+    transform_silver_to_notif_impact = transform_silver_to_notif_impact()
+    # 2ème table gold
+    transform_silver_to_user_activity = transform_silver_to_user_activity()
+
+
+    # (4) Chargement des tables vers le data warehouse :
+    load_gold_to_duckdb = load_to_duckdb()
+
+# DAG steps order :
+[extract_daily_from_postgres, extract_daily_from_cassandra, extract_daily_from_neo4j] >> transform_postgres_bronze_to_silver >> transform_cassandra_bronze_to_silver >> [transform_silver_to_notif_impact, transform_silver_to_user_activity] >> load_gold_to_duckdb

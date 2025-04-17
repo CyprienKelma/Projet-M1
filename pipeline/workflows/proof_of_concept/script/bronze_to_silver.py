@@ -24,7 +24,7 @@ def transform_bronze_to_silver():
     df = pd.read_csv(path)
     df_clean = df[df["email"].notnull()]
     out_path = "/tmp/users_clean.parquet"
-    df_clean.to_parquet(out_path)
+    df_clean.to_parquet(out_path, engine="pyarrow")
 
     if not client.bucket_exists("silver"):
         client.make_bucket("silver")
