@@ -75,3 +75,31 @@ workers:
     limits:
       memory: "4Gi"
       cpu: "2"
+
+scheduler:
+  extraVolumeMounts:
+    - name: duckdb-volume
+      mountPath: /opt/duckdb
+  extraVolumes:
+    - name: duckdb-volume
+      persistentVolumeClaim:
+        claimName: duckdb-pvc
+
+worker:
+  extraVolumeMounts:
+    - name: duckdb-volume
+      mountPath: /opt/duckdb
+  extraVolumes:
+    - name: duckdb-volume
+      persistentVolumeClaim:
+        claimName: duckdb-pvc
+
+web:
+  extraVolumeMounts:
+    - name: duckdb-volume
+      mountPath: /opt/duckdb
+  extraVolumes:
+    - name: duckdb-volume
+      persistentVolumeClaim:
+        claimName: duckdb-pvc
+

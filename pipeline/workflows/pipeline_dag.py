@@ -7,6 +7,11 @@ from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKu
 from datetime import datetime
 from prod_pipeline.extract_daily import extract_postgres_to_bronze_bucket, extract_cassandra_tables_to_bronze_bucket
 from proof_of_concept.script.extract_load import extract_neo4j_to_minio
+from pipeline.workflows.prod_pipeline.postgres_bronze_to_silver import transform_postgres_bronze_to_silver
+from prod_pipeline.cassandra_bronze_to_silver import transform_cassandra_bronze_to_silver
+from prod_pipeline.silver_to_notif_impact import transform_silver_to_notif_impact
+from prod_pipeline.silver_to_users_activity import transform_silver_to_user_activity
+from prod_pipeline.load_to_duckdb import load_to_duckdb
 
 with DAG("prod_pipeline",
          start_date=datetime(2024, 1, 1),
