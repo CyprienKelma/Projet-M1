@@ -31,7 +31,7 @@ def extract_postgres_to_bronze_bucket():
     if not client.bucket_exists("bronze"):
         client.make_bucket("bronze")
 
-    TABLES = ["users", "groups", "groups_users_user", "activities", "notification_states"]
+    TABLES = ["users", "groups", "activities", "notification_states"]
     today = datetime.today().strftime("%Y-%m-%d")
     batch_size = 10000
 
