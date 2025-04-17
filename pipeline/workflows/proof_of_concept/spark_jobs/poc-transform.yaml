@@ -7,10 +7,10 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "openlake/spark-py:latest"
+  image: "openlake/spark-py:3.3.1"
   imagePullPolicy: Always
   mainApplicationFile: https://raw.githubusercontent.com/CyprienKelma/Projet-M1/refs/heads/pipeline-dev/pipeline/workflows/proof_of_concept/script/bronze_to_silver.py
-  sparkVersion: "latest"
+  sparkVersion: "3.3.1"
   restartPolicy:
     type: Never
   volumes:
