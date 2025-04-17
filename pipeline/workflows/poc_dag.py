@@ -65,7 +65,7 @@ with DAG("poc_pipeline",
         env_vars={ # pour que spark se co à minio
             "AWS_ACCESS_KEY_ID": "minio",
             "AWS_SECRET_ACCESS_KEY": "minio123",
-            "AWS_ENDPOINT": "https://minio-tenant.minio-tenant.svc.cluster.local:9000",
+            "AWS_ENDPOINT": "http://minio-tenant.minio-tenant.svc.cluster.local:9000",
             "SPARK_LOCAL_DIRS": "/tmp",
             "HOME": "/tmp",
             "IVY_HOME": "/tmp/.ivy2",
