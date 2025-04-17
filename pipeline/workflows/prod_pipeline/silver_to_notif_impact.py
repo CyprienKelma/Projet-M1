@@ -49,8 +49,7 @@ def transform_silver_to_notif_impact(**context):
         right_on=["notification_id", "user_id"]
     )
 
-    # Vérifie les colonnes après le merge
-    # print("Colonnes après merge:", merged.columns.tolist())
+    merged["is_success"] = merged["status"] == "read"
 
     # Choisis la colonne notif_date à garder (celle de notif_states)
     if "notif_date_x" in merged.columns:
