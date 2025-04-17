@@ -60,7 +60,7 @@ def extract_cassandra_tables_to_minio():
     from minio import Minio
     import pandas as pd
 
-    TABLES = ["messages", "notifications"]
+    TABLES = ["group_messages", "user_notifications"]
     auth_provider = PlainTextAuthProvider("demo-superuser", "aNgSePPuVZs63BlFeS02")
     cluster = Cluster(
         ["demo-dc1-service.cassandra.svc.cluster.local"],
