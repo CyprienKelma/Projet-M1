@@ -15,7 +15,8 @@ def transform_bronze_to_silver():
         "minio-tenant-hl.minio-tenant.svc.cluster.local:9000",
         access_key="minio",
         secret_key="minio123",
-        secure=False,
+        secure=True,
+        cert_check=False
     )
     path = "/tmp/users.csv"
     client.fget_object("bronze", "demo/users.csv", path)
