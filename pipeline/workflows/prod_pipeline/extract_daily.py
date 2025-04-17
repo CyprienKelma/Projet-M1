@@ -31,7 +31,7 @@ def extract_postgres_to_bronze_bucket():
     if not client.bucket_exists("bronze"):
         client.make_bucket("bronze")
 
-    TABLES = ["users", "groups", "activities", "notification_states"]
+    TABLES = ["users", "groups", "activities"]
     today = datetime.today().strftime("%Y-%m-%d")
     batch_size = 10000
 
@@ -57,6 +57,39 @@ def extract_postgres_to_bronze_bucket():
             offset += batch_size
             batch_num += 1
 
+    table = "groups_users_user"
+    offset = 0
+    batch_num = 0
+    while True:
+        print(f"[INFO] Extracting {table} from Postgres at batch {batch_num}...")
+        query = f"SELECT * FROM {table} LIMIT {batch_size} OFFSET {offset}"
+        df = pd.read_sql(query, conn)
+        if df.empty:
+            break
+        local_path = f"/tmp/{table}_batch{batch_num}.csv"
+        minio_path = f"{table}/{today}/{table}_batch{batch_num}.csv"
+        df.to_csv(local_path, index=False)
+        client.fput_object("bronze", minio_path, local_path)
+        print(f"Batch {batch_num} de {table} uploaded dans : bronze/{table}/{today}/")
+        offset += batch_size
+        batch_num += 1
+
+    table = "notification_states"
+    offset = 0
+    batch_num = 0
+    while True:
+        print(f"[INFO] Extracting {table} from Postgres at batch {batch_num}...")
+        query = f"SELECT * FROM {table} WHERE DATE(updated_at) = '{today}' LIMIT {batch_size} OFFSET {offset}"
+        df = pd.read_sql(query, conn)
+        if df.empty:
+            break
+        local_path = f"/tmp/{table}_batch{batch_num}.csv"
+        minio_path = f"{table}/{today}/{table}_batch{batch_num}.csv"
+        df.to_csv(local_path, index=False)
+        client.fput_object("bronze", minio_path, local_path)
+        print(f"Batch {batch_num} de {table} uploaded dans : bronze/{table}/{today}/")
+        offset += batch_size
+        batch_num += 1
 
 
 @task.virtualenv(
