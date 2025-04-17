@@ -33,10 +33,18 @@ def load_to_duckdb(**context):
 
     # Connexion au fichier DuckDB
 
+        
     duckdb_path = "/opt/duckdb/analytics.duckdb"
+
+    # 1. Crée le dossier s'il n'existe pas (ce n'est pas le fichier !)
+    os.makedirs(os.path.dirname(duckdb_path), exist_ok=True)
+
+    # 2. Crée le fichier si besoin
     if not os.path.exists(duckdb_path):
         conn_init = duckdb.connect(duckdb_path)
         conn_init.close()
+
+    # 3. Connexion normale
     conn = duckdb.connect(duckdb_path)
 
 
