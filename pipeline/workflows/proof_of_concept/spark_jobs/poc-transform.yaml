@@ -26,6 +26,13 @@ spec:
     volumeMounts:
       - name: script-volume
         mountPath: /opt/spark/scripts
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        value: "minio"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minio123"
+      - name: AWS_ENDPOINT
+        value: "http://minio.minio-tenant.svc.cluster.local:9000"
   executor:
     cores: 1
     instances: 1
@@ -33,3 +40,10 @@ spec:
     volumeMounts:
       - name: script-volume
         mountPath: /opt/spark/scripts
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        value: "minio"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minio123"
+      - name: AWS_ENDPOINT
+        value: "http://minio.minio-tenant.svc.cluster.local:9000"
