@@ -13,6 +13,7 @@ def transform_silver_to_user_activity(**context):
     from io import BytesIO
     from datetime import timedelta
     import os
+    from datetime import datetime
 
     ds = context["ds"]
     today = datetime.strptime(ds, "%Y-%m-%d").date()

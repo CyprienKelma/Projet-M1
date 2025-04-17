@@ -12,6 +12,7 @@ def transform_silver_to_notif_impact(**context):
     from minio import Minio
     from io import BytesIO
     import os
+    from datetime import datetime
 
     # Contexte de date pour lire les bons dossiers
     ds = context["ds"]
