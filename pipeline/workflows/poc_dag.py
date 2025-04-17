@@ -25,6 +25,7 @@ with DAG("poc_pipeline",
         namespace="spark",
         application_file="proof_of_concept/spark_jobs/poc-transform.yaml",
         do_xcom_push=False,
+        application_name="bronze-to-silver-demo",
     )
 
     # single_transform_data = KubernetesPodOperator(
