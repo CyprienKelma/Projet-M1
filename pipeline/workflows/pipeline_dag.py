@@ -1,7 +1,6 @@
 from airflow import DAG
 from kubernetes.client import models as k8s
 from airflow.operators.python import PythonOperator
-from airflow.utils.helpers import cross_downstream
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator, KubernetesPodOperator
 #from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from datetime import datetime
@@ -42,14 +41,12 @@ with DAG("prod_pipeline",
     load_gold_to_duckdb = load_to_duckdb()
 
 # DAG steps order :
-# 1. Extracts
-for extract in [extract_daily_from_postgres, extract_daily_from_cassandra, extract_daily_from_neo4j]:
-    extract >> transform_task_postgres_bronze_to_silver
-    extract >> transform_task_cassandra_bronze_to_silver
+extract_daily_from_postgres >> transform_task_postgres_bronze_to_silver
+extract_daily_from_cassandra >> transform_task_cassandra_bronze_to_silver
+extract_daily_from_neo4j >> [transform_task_postgres_bronze_to_silver, transform_task_cassandra_bronze_to_silver]
 
-# 2. Transforms to Silver
 transform_task_postgres_bronze_to_silver >> [transform_task_silver_to_notif_impact, transform_task_silver_to_user_activity]
 transform_task_cassandra_bronze_to_silver >> [transform_task_silver_to_notif_impact, transform_task_silver_to_user_activity]
 
-# 3. Load
-[transform_task_silver_to_notif_impact, transform_task_silver_to_user_activity] >> load_gold_to_duckdb
+transform_task_silver_to_notif_impact >> load_gold_to_duckdb
+transform_task_silver_to_user_activity >> load_gold_to_duckdb
