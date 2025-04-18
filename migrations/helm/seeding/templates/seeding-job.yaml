@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "seeding.fullname" . }}
+  labels:
+    {{- include "seeding.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "10"  # Run after migrations
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: seeder
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PG_HOST
+              value: "{{ .Values.postgresql.host }}"
+            - name: PG_PORT
+              value: "{{ .Values.postgresql.port }}"
+            - name: PG_USERNAME
+              value: "{{ .Values.postgresql.username }}"
+            - name: PG_PASSWORD
+              value: "{{ .Values.postgresql.password }}"
+            - name: PG_DATABASE
+              value: "{{ .Values.postgresql.database }}"
+            - name: CASSANDRA_HOST
+              value: "{{ .Values.cassandra.host }}"
+            - name: CASSANDRA_PORT
+              value: "{{ .Values.cassandra.port }}"
+            - name: CASSANDRA_USERNAME
+              value: "{{ .Values.cassandra.username }}"
+            - name: CASSANDRA_PASSWORD
+              value: "{{ .Values.cassandra.password }}"
+            - name: CASSANDRA_KEYSPACE
+              value: "{{ .Values.cassandra.keyspace }}"
+            - name: DATA_VOLUME
+              value: "{{ .Values.seeding.dataVolume }}"

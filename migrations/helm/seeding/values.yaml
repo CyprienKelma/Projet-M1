@@ -1,0 +1,21 @@
+image:
+  repository: bafbi/m1-database-seeding
+  tag: latest
+  pullPolicy: Always
+
+postgresql:
+  host: postgres-minimal-cluster.postgresql.svc.cluster.local
+  port: "5432"
+  username: stmg
+  password: uzWe8yt6cihF9gbuJi7ot5whT2hsOQfikcCupPLRSA3a70JQQmBacfCspbjKUrwu
+  database: demo
+
+cassandra:
+  host: demo-dc1-service.cassandra.svc.cluster.local
+  port: "9042"
+  username: demo-superuser
+  password: aNgSePPuVZs63BlFeS02
+  keyspace: cassandra
+
+seeding:
+  dataVolume: "large" # small, medium, large

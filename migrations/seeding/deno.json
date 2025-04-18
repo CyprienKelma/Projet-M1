@@ -1,0 +1,13 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-net --allow-env main.ts",
+    "seed": "deno run --allow-net --allow-env main.ts",
+    "test": "deno run --allow-net --allow-env main.ts --dry-run --small"
+  },
+  "imports": {
+    "@faker-js/faker": "npm:@faker-js/faker@^9.7.0",
+    "@std/crypto": "jsr:@std/crypto@^1.0.4",
+    "cassandra-driver": "npm:cassandra-driver@^4.8.0",
+    "postgres": "npm:postgres@^3.4.5"
+  }
+}

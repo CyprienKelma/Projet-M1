@@ -1,0 +1,32 @@
+# apiVersion: batch/v1
+# kind: Job
+# metadata:
+#   name: {{ include "seeding.fullname" . }}-postgres-connection-check
+#   labels:
+#     app.kubernetes.io/name: {{ include "seeding.name" . }}
+#     app.kubernetes.io/component: connection-check
+#     app.kubernetes.io/instance: {{ .Release.Name }}
+#   annotations:
+#     "helm.sh/hook": pre-install,pre-upgrade
+#     "helm.sh/hook-delete-policy": before-hook-creation
+# spec:
+#   backoffLimit: 0
+#   template:
+#     spec:
+#       restartPolicy: Never
+#       containers:
+#         - name: psql-check
+#           image: postgres:17
+#           command: ["sh", "-c"]
+#           args:
+#             - |
+#               echo "Checking connection to $DATABASE_URL..."
+#               until psql "$DATABASE_URL" -c '\conninfo'; do
+#                 echo "Waiting for PostgreSQL..."
+#                 sleep 2
+#               done
+#               echo "✅ Connected to PostgreSQL!"
+#           env:
+#             - name: DATABASE_URL
+#               value: >-
+#                 postgres://{{ .Values.postgresql.username | urlquery }}:{{ .Values.postgresql.password | urlquery }}@{{ .Values.postgresql.host }}:5432/{{ .Values.postgresql.database | urlquery }}?sslmode=require

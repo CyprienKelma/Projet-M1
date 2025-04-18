@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+.out/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env*
+!.env.example
+!.env.template
+
+# Coverage directory
+coverage/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Optional: Uncomment if you don't want to commit package lock files
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
