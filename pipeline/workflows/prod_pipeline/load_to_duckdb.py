@@ -62,3 +62,11 @@ def load_to_duckdb(**context):
     conn.execute("INSERT INTO gold_user_activity_per_day SELECT * FROM activity_df")
 
     print(f"Données du {ds} insérées dans DuckDB.")
+
+    duckdb_backup_path = f"duckdb_backups/{ds}/analytics.duckdb"
+    client.fput_object(
+        bucket_name="backup",
+        object_name=duckdb_backup_path,
+        file_path=duckdb_path,
+    )
+    print(f"Données du {ds} insérées en backup dans MinIO.")
