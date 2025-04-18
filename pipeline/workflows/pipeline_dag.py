@@ -1,6 +1,7 @@
 from airflow import DAG
 from kubernetes.client import models as k8s
 from airflow.operators.python import PythonOperator
+from airflow.utils.task_group import TaskGroup
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator, KubernetesPodOperator
 #from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from datetime import datetime
@@ -20,28 +21,27 @@ with DAG("prod_pipeline",
 
 
     # (1) Extract vers le bucket bronze :
-    extract_daily_from_postgres = extract_postgres_to_bronze_bucket()
-    extract_daily_from_cassandra = extract_cassandra_tables_to_bronze_bucket()
-    extract_daily_from_neo4j = extract_neo4j_to_minio()
+    with TaskGroup("extract") as extract_group:
+        extract_daily_from_postgres = extract_postgres_to_bronze_bucket()
+        extract_daily_from_cassandra = extract_cassandra_tables_to_bronze_bucket()
+        extract_daily_from_neo4j = extract_neo4j_to_minio()
+
 
 
     # (2) Nettoyage/harmonisation vers le bucket silver :
-    transform_task_postgres_bronze_to_silver = transform_postgres_bronze_to_silver()
-    transform_task_cassandra_bronze_to_silver = transform_cassandra_bronze_to_silver()
+    with TaskGroup("bronze_to_silver") as bronze_to_silver_group:
+        transform_task_postgres_bronze_to_silver = transform_postgres_bronze_to_silver()
+        transform_task_cassandra_bronze_to_silver = transform_cassandra_bronze_to_silver()
 
 
     # (3) Transformation vers le bucket gold :
-    # 1ère table gold
-    transform_task_silver_to_notif_impact = transform_silver_to_notif_impact()
-    # 2ème table gold
-    transform_task_silver_to_user_activity = transform_silver_to_user_activity()
+    with TaskGroup("silver_to_gold") as silver_to_gold_group:
+        transform_task_silver_to_notif_impact = transform_silver_to_notif_impact()
+        transform_task_silver_to_user_activity = transform_silver_to_user_activity()
 
 
     # (4) Chargement des tables vers le data warehouse :
     load_gold_to_duckdb = load_to_duckdb()
 
-# DAG steps order :
-(extract_daily_from_postgres, extract_daily_from_cassandra, extract_daily_from_neo4j) >> \
-(transform_task_postgres_bronze_to_silver, transform_task_cassandra_bronze_to_silver) >> \
-(transform_task_silver_to_notif_impact, transform_task_silver_to_user_activity) >> \
-load_gold_to_duckdb
+    # DAG steps order :
+    extract_group >> bronze_to_silver_group >> silver_to_gold_group >> load_gold_to_duckdb
