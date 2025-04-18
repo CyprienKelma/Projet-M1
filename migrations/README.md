@@ -1,23 +1,37 @@
-# Database Migrations Module
+# Database Migrations & Seeding Module
 
-This module manages database schemas for both PostgreSQL and Cassandra databases using containerized migration tools and Helm charts for Kubernetes deployment.
+This module manages schema migrations and initial data seeding for both PostgreSQL and Cassandra databases in Kubernetes environments.
 
-## Overview
+## Purpose
 
-The migrations module provides an organized approach to:
-- Define, version and apply database schema changes
-- Deploy migrations as Kubernetes jobs
-- Support both PostgreSQL and Cassandra databases
-- Reset databases when needed during development
+- Define, version, and apply schema changes for PostgreSQL and Cassandra.
+- Deploy migrations and seeding as Kubernetes jobs via Helm.
+- Support database resets and flexible data volumes for development/testing.
 
-## Architecture
+## Technologies Used
 
-The system consists of:
+- **PostgreSQL** & **Cassandra** (databases)
+- **dbmate** (PostgreSQL migrations)
+- **Custom CQL scripts** (Cassandra migrations)
+- **Docker** (containerized migration/seeding tools)
+- **Helm** (Kubernetes deployment)
+- **Node.js** & **Deno** (data seeding scripts)
+- **faker.js** (realistic test data generation)
 
-- **PostgreSQL migrations**: Using [dbmate](https://github.com/amacneil/dbmate) for SQL migrations
-- **Cassandra migrations**: Using custom CQL scripts with versioning
-- **Helm chart**: For deploying as Kubernetes jobs
-- **Docker images**: Containerized migration tools
+## Structure
+
+- `postgres/` – PostgreSQL migrations (dbmate, SQL files, Dockerfile)
+- `cassandra/` – Cassandra migrations (CQL scripts, Dockerfile)
+- `seeding/` – Deno-based seeding scripts (Postgres & Cassandra)
+- `seeding-node/` – Node.js-based seeding scripts (alternative)
+- `helm/` – Helm charts for deploying migrations and seeding as jobs
+- `deploy.sh` – Orchestrates build and deployment
+
+## Prerequisites
+
+- Docker
+- Kubernetes cluster & `kubectl`
+- Helm 3
 
 ## Database Schema
 
@@ -121,83 +135,53 @@ PG_NotificationStates ..> C_UserNotifications : references
 
 ## Usage
 
-### Prerequisites
+### 1. Configure Database Connections
 
-- Docker installed and configured
-- Access to a Kubernetes cluster
-- `kubectl` configured to access your cluster
-- `helm` installed
+Edit `helm/migrations/values.yaml` and `helm/seeding/values.yaml` to set database hosts, credentials, and keyspaces.
 
-### Configuration
+### 2. Build and Push Migration Images
 
-Edit the `helm/migrations/values.yaml` file to configure database connection details:
-
-```yaml
-postgresql:
-  env:
-    host: your-postgres-host
-    username: your-username
-    password: your-password
-    database: your-database
-
-cassandra:
-  env:
-    host: your-cassandra-host
-    username: your-username
-    password: your-password
-    keyspace: your-keyspace
-```
-
-### Creating New Migrations
-
-### PostgreSQL
-
-1. Navigate to the `postgres` directory
-2. Create a new migration using the dbmate script:
-   ```bash
-   ./dbmate.sh new your_migration_name
-   ```
-   This will create a new SQL file in `postgres/migrations/` with the naming convention `YYYYMMDDHHMMSS_your_migration_name.sql`
-
-3. Edit the file and add your schema changes between the `-- migrate:up` and `-- migrate:down` markers:
-   ```sql
-   -- migrate:up
-   CREATE TABLE your_table (
-     id SERIAL PRIMARY KEY,
-     name TEXT
-   );
-
-   -- migrate:down
-   DROP TABLE IF EXISTS your_table;
-   ```
-
-#### Cassandra
-
-1. Create a new CQL file in `cassandra/migrations/` with the naming convention `NNN_description.cql`
-2. Add your CQL commands to create or modify tables
-
-### Building and Deploying
-
-Use the provided deploy script:
-
-```bash
-# Deploy migrations
+```sh
+cd migrations
 ./deploy.sh
+```
+This builds Docker images for migrations and deploys them as Kubernetes jobs.
 
-# Deploy with database reset (caution: destroys data)
-./deploy.sh --reset
+- Use `./deploy.sh --reset` to drop and recreate schemas.
+- Use `./deploy.sh --seed` to run data seeding after migrations.
+
+### 3. Creating New Migrations
+
+**PostgreSQL:**
+```sh
+cd postgres
+./dbmate.sh new add_new_table
+# Edit the generated SQL file in postgres/migrations/
 ```
 
-## How It Works
+**Cassandra:**
+- Add a new `.cql` file in `cassandra/migrations/` (e.g., `005_add_table.cql`).
 
-1. Docker images are built for both PostgreSQL and Cassandra migrations
-2. Helm deploys Kubernetes jobs that run these images
-3. PostgreSQL migrations use dbmate to track and apply changes
-4. Cassandra migrations use a custom script to track applied migrations in a table
-5. Each migration runs only once
+### 4. Seeding Data
 
-## Troubleshooting
+- Seeding jobs run automatically if `--seed` is passed to `deploy.sh`.
+- Data volume (small/medium/large) can be set in values or via `DATA_VOLUME` env var.
 
-- Check Kubernetes job logs: `kubectl logs job/migrations-postgres-migrations`
-- Verify database connectivity from within cluster
-- Use `--reset` flag to start fresh if migrations are in a failed state
+## Monitoring & Troubleshooting
+
+- Check job status:
+  `kubectl get jobs`
+- View logs:
+  `kubectl logs job/<job-name>`
+- Reset databases if migrations fail:
+  `./deploy.sh --reset`
+
+## Customization
+
+- Adjust data volume for seeding (`small`, `medium`, `large`, `prod`).
+- Add/modify migration scripts as needed.
+- Use either Deno or Node.js seeding scripts.
+
+## License
+
+See main project license.
