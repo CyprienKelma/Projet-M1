@@ -43,5 +43,5 @@ with DAG("prod_pipeline",
     # (4) Chargement des tables vers le data warehouse :
     load_gold_to_duckdb = load_to_duckdb()
 
-    # DAG steps order :
+    # DAG steps :
     extract_group >> bronze_to_silver_group >> silver_to_gold_group >> load_gold_to_duckdb
