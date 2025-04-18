@@ -1,7 +1,7 @@
 from airflow import DAG
 from kubernetes.client import models as k8s
 from airflow.operators.python import PythonOperator
-from airflow.models.dag import chain
+from airflow.utils.helpers import chain
 from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator, KubernetesPodOperator
 #from airflow.providers.cncf.kubernetes.operators.kubernetes_pod import KubernetesPodOperator
 from datetime import datetime
