@@ -57,7 +57,7 @@ def transform_silver_to_notif_impact(**context):
     elif "notif_date" not in merged.columns:
         merged["notif_date"] = pd.to_datetime(merged["updated_at"]).dt.date
 
-    # Maintenant, tu peux sélectionner les colonnes
+    # selection colonnes
     merged = merged[["user_id", "content", "notif_date", "is_success"]].rename(columns={"content": "content_notif"})
 
     # Temps passé après la notif

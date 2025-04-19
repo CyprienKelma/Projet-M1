@@ -31,20 +31,16 @@ def load_to_duckdb(**context):
     notif_df = read_parquet("gold", f"global_notif_impact_per_day/{ds}/global_notif_impact_per_day.parquet")
     activity_df = read_parquet("gold", f"global_user_activity_per_day/{ds}/global_user_activity_per_day.parquet")
 
+    print(notif_df.shape, notif_df.head())
+    
     # Connexion au fichier DuckDB
-
-        
     duckdb_path = "/opt/airflow/duckdb/analytics.duckdb"
-
-    # 1. Crée le dossier s'il n'existe pas (ce n'est pas le fichier !)
     os.makedirs(os.path.dirname(duckdb_path), exist_ok=True)
 
-    # 2. Crée le fichier si besoin
     if not os.path.exists(duckdb_path):
         conn_init = duckdb.connect(duckdb_path)
         conn_init.close()
 
-    # 3. Connexion normale
     conn = duckdb.connect(duckdb_path)
 
 
