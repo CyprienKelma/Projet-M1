@@ -53,9 +53,8 @@ def transform_silver_to_notif_impact(**context):
     merged = pd.merge(
         notif_states,
         user_notifs,
-        how="left",
-        left_on=["notification_id", "user_id"],
-        right_on=["notification_id", "user_id"]
+        how="inner",
+        on="notification_id"
     )
 
     merged["is_success"] = merged["status"] == "read"
@@ -86,7 +85,7 @@ def transform_silver_to_notif_impact(**context):
 
 
     print("Final Shape : ", final_df.shape, final_df.head())
-    
+
     # Écriture vers MinIO (bucket gold)
     out_path = f"/tmp/global_notif_impact_per_day_{ds}.parquet"
     final_df.to_parquet(out_path, index=False)
