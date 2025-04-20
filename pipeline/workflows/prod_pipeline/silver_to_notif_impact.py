@@ -40,6 +40,8 @@ def transform_silver_to_notif_impact(**context):
     notif_states["notif_date"] = pd.to_datetime(notif_states["updated_at"]).dt.date
     user_notifs["notif_date"] = pd.to_datetime(user_notifs["notification_time"]).dt.date
 
+    print("Notif Shape : ", notif_states.shape, notif_states.head())
+    print("Activity Shape : ", user_notifs.shape, user_notifs.head())
     
 
     # Supposons que si status == 'seen' c’est un succès
@@ -80,6 +82,10 @@ def transform_silver_to_notif_impact(**context):
     # Écriture vers MinIO (bucket gold)
     out_path = f"/tmp/global_notif_impact_per_day_{ds}.parquet"
     final_df.to_parquet(out_path, index=False)
+
+    print("After transform Notif Shape : ", notif_states.shape, notif_states.head())
+    print("After transform Activity Shape : ", user_notifs.shape, user_notifs.head())
+    
 
     if not client.bucket_exists("gold"):
         client.make_bucket("gold")
