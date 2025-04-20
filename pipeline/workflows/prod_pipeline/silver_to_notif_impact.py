@@ -43,6 +43,9 @@ def transform_silver_to_notif_impact(**context):
     print("Notif Shape : ", notif_states.shape, notif_states.head())
     print("Activity Shape : ", user_notifs.shape, user_notifs.head())
     
+    merged["user_id"] = merged["user_id"].astype(str)
+    sessions["user_id"] = sessions["user_id"].astype(str)
+
 
     # Supposons que si status == 'seen' c’est un succès
     merged = pd.merge(
