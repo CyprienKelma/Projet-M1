@@ -3,18 +3,6 @@ from datetime import datetime, timedelta
 from uuid import UUID, uuid5
 
 
-# Namespace utilisé lors du seeding (fourni par ton collègue)
-M1_SEEDING_NAMESPACE = UUID("f47ac10b-58cc-4372-a567-0e02b2c3d479")
-
-
-def int_to_uuid(prefix: str, pg_id: int) -> UUID:
-    """
-    Reproduit exactement le même UUID v5 que lors du seeding :
-    uuidv5(NAMESPACE, f"{prefix}-{pg_id}")
-    """
-    return uuid5(M1_SEEDING_NAMESPACE, f"{prefix}-{pg_id}")
-
-
 @task.virtualenv(
     use_dill=True,
     requirements=["pandas", "pyarrow", "minio"],
@@ -32,6 +20,7 @@ def transform_silver_to_notif_impact(**context):
     import pandas as pd
     from minio import Minio
     from io import BytesIO
+    from uuid import UUID, uuid5
     from datetime import timedelta, datetime
 
     # ------------------------------------------------------------------ #
@@ -59,6 +48,16 @@ def transform_silver_to_notif_impact(**context):
         df.to_parquet(local_path, index=False)
         client.fput_object("gold", path, local_path)
         print(f"Table écrite : gold/{path}")
+
+    # Namespace utilisé lors du seeding (fourni par ton collègue)
+    M1_SEEDING_NAMESPACE = UUID("f47ac10b-58cc-4372-a567-0e02b2c3d479")
+
+    def int_to_uuid(prefix: str, pg_id: int) -> UUID:
+        """
+        Reproduit exactement le même UUID v5 que lors du seeding :
+        uuidv5(NAMESPACE, f"{prefix}-{pg_id}")
+        """
+        return uuid5(M1_SEEDING_NAMESPACE, f"{prefix}-{pg_id}")
 
     # ------------------------------------------------------------------ #
     # 1. Lecture des trois tables silver du jour (déjà *clean*)
