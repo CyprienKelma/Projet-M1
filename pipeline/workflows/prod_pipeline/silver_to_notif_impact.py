@@ -55,6 +55,7 @@ def transform_silver_to_notif_impact(**context):
         on="notification_id"
     )
 
+    after_notif["user_id"] = after_notif["user_id_x"]
     merged["is_success"] = merged["status"] == "read"
 
     # Garde la notif_date de notif_states
