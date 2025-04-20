@@ -48,10 +48,10 @@ def load_to_duckdb(**context):
 
     # Créer les tables si elles n’existent pas encore
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS gold_notif_impact_per_day AS SELECT * FROM notif_df LIMIT 0
+        CREATE TABLE IF NOT EXISTS gold_notif_impact_per_day AS SELECT * FROM notif_df
     """)
     conn.execute("""
-        CREATE TABLE IF NOT EXISTS gold_user_activity_per_day AS SELECT * FROM activity_df LIMIT 0
+        CREATE TABLE IF NOT EXISTS gold_user_activity_per_day AS SELECT * FROM activity_df
     """)
 
     # Append les nouvelles données

@@ -84,13 +84,14 @@ def transform_silver_to_notif_impact(**context):
 
     final_df = durations[["user_id", "content_notif", "notif_date", "is_success", "time_spend_after_success"]]
 
+
+    print("Final Shape : ", final_df.shape, final_df.head())
+    
     # Écriture vers MinIO (bucket gold)
     out_path = f"/tmp/global_notif_impact_per_day_{ds}.parquet"
     final_df.to_parquet(out_path, index=False)
 
-    print("After transform Notif Shape : ", notif_states.shape, notif_states.head())
-    print("After transform Activity Shape : ", user_notifs.shape, user_notifs.head())
-    
+
 
     if not client.bucket_exists("gold"):
         client.make_bucket("gold")
