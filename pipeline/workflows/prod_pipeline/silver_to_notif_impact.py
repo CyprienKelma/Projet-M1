@@ -32,6 +32,7 @@ def transform_silver_to_notif_impact(**context):
     import pandas as pd
     from minio import Minio
     from io import BytesIO
+    from datetime import timedelta, datetime
 
     # ------------------------------------------------------------------ #
     # 0. Infos de contexte et helpers MinIO
@@ -156,7 +157,7 @@ def transform_silver_to_notif_impact(**context):
     ]
     sessions = sessions[sessions_needed_cols]
 
-    # On fait un merge (explosif) puis filtre → somme des durées
+    # On fait un merge (explosif) puis filtre -> somme des durées
     notifs = notifs.merge(
         sessions,
         left_on=["user_id", "notif_date"],
@@ -164,7 +165,7 @@ def transform_silver_to_notif_impact(**context):
         how="left",
     )
 
-    # session_start >= notif_ts  →  valable uniquement pour les succès
+    # session_start >= notif_ts  =>  valable uniquement pour les succès
     mask_after_notif = notifs["session_start"] >= notifs["notif_ts"]
     notifs.loc[~mask_after_notif, "duration"] = pd.NaT
 
@@ -176,7 +177,7 @@ def transform_silver_to_notif_impact(**context):
         .agg(time_spend_after_success=("duration", "sum"))
     )
 
-    # Pour les notifications non réussies → durée = 0
+    # notifications non réussies => durée = 0
     agg["time_spend_after_success"] = agg["time_spend_after_success"].fillna(
         timedelta(seconds=0)
     )
