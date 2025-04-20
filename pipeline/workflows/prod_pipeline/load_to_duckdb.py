@@ -61,7 +61,7 @@ def load_to_duckdb(**context):
         # -------------------------------------------------------------- #
         conn.execute("""
             CREATE TABLE IF NOT EXISTS gold_notif_impact_per_day (
-                user_id UUID,
+                user_id TEXT,
                 content_notif TEXT,
                 notif_date DATE,
                 is_success BOOLEAN,
@@ -70,7 +70,7 @@ def load_to_duckdb(**context):
         """)
         conn.execute("""
             CREATE TABLE IF NOT EXISTS gold_user_activity_per_day (
-                user_id UUID,
+                user_id TEXT,
                 date DATE,
                 total_nbr_connexion INTEGER,
                 total_spend_time INTERVAL,
@@ -100,7 +100,7 @@ def load_to_duckdb(**context):
 
         conn.execute("""
             INSERT INTO gold_notif_impact_per_day
-            SELECT  CAST(user_id AS UUID),
+            SELECT  user_id,
                     content_notif,
                     notif_date,
                     is_success,
@@ -110,7 +110,7 @@ def load_to_duckdb(**context):
 
         conn.execute("""
             INSERT INTO gold_user_activity_per_day
-            SELECT  CAST(user_id AS UUID),
+            SELECT  user_id,
                     date,
                     total_nbr_connexion,
                     total_spend_time,
