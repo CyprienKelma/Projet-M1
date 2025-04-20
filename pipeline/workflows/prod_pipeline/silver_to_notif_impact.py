@@ -72,12 +72,15 @@ def transform_silver_to_notif_impact(**context):
     merged["user_id"] = merged["user_id"].astype(str)
 
     # Jointure avec sessions
+    merged["merge_key"] = 1
+    sessions["merge_key"] = 1
+
+    # Merge uniquement sur notif_date (peu précis, mais ça donne des lignes)
     after_notif = pd.merge(
         merged,
         sessions,
-        how="left",
-        left_on=["user_id", "notif_date"],
-        right_on=["user_id", "session_date"]
+        how="inner",
+        on=["merge_key", "notif_date"]
     )
 
     # Calcul durée
