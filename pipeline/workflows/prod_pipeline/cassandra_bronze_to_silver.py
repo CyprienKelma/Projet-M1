@@ -45,7 +45,7 @@ def transform_cassandra_bronze_to_silver():
         df = pd.read_csv(obj)
 
         # TODO debug
-        print(df.shape, df.head())
+        print(df.shape, df.head(20))
 
         df.dropna(subset=["user_id", "notification_id", "content", "state"], inplace=True)
         df = df[df["state"].isin(["SEEN", "FAILED", "CLICKED"])]
@@ -70,7 +70,7 @@ def transform_cassandra_bronze_to_silver():
         
         # TODO debug
         print(df.shape, df.head())
-        
+
         df.dropna(subset=["user_id", "session_id", "event_type"], inplace=True)
         #df = df[df["event_type"].isin(["login", "logout", "view", "click"])]
 
