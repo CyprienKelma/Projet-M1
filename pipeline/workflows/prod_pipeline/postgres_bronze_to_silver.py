@@ -34,6 +34,11 @@ def transform_postgres_bronze_to_silver():
     def read_bronze(table):
         minio_path = f"{table}/{today}/{table}.csv"
         local_path = f"/tmp/{table}.csv"
+
+        found = client.stat_object("bronze", minio_path)
+        if not found:
+            raise FileNotFoundError(f"File not found in MinIO: {minio_path}")
+
         client.fget_object("bronze", minio_path, local_path)
         return pd.read_csv(local_path)
 
