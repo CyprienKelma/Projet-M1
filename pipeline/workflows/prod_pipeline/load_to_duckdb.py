@@ -24,14 +24,15 @@ def load_to_duckdb(**context):
         cert_check=False
     )
 
-    def read_parquet(bucket, path):
+    def read_parquet_from_minio(bucket, path):
         response = client.get_object(bucket, path)
         return pd.read_parquet(BytesIO(response.read()))
 
-    notif_df = read_parquet("gold", f"global_notif_impact_per_day/{ds}/global_notif_impact_per_day.parquet")
-    activity_df = read_parquet("gold", f"global_user_activity_per_day/{ds}/global_user_activity_per_day.parquet")
+    notif_df = read_parquet_from_minio("gold", f"global_notif_impact_per_day/{ds}/global_notif_impact_per_day.parquet")
+    activity_df = read_parquet_from_minio("gold", f"global_user_activity_per_day/{ds}/global_user_activity_per_day.parquet")
 
-    print(notif_df.shape, notif_df.head())
+    print("Notif Shape : ", notif_df.shape, notif_df.head())
+    print("Activity Shape : ", activity_df.shape, activity_df.head())
     
     # Connexion au fichier DuckDB
     duckdb_path = "/opt/airflow/duckdb/analytics.duckdb"

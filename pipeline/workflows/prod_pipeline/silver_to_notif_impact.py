@@ -40,6 +40,8 @@ def transform_silver_to_notif_impact(**context):
     notif_states["notif_date"] = pd.to_datetime(notif_states["updated_at"]).dt.date
     user_notifs["notif_date"] = pd.to_datetime(user_notifs["notification_time"]).dt.date
 
+    
+
     # Supposons que si status == 'seen' c’est un succès
     merged = pd.merge(
         notif_states,

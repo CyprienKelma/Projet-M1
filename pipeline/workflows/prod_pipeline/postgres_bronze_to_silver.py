@@ -63,12 +63,12 @@ def transform_postgres_bronze_to_silver():
     df_act = read_bronze("activities")
     df_act = df_act.dropna(subset=["title", "scheduled_at"])
     df_act = df_act[df_act["scheduled_at"] <= str(datetime.today())]
-    df_act = df_act[df_act["status"].isin(["planned", "ongoing", "done"])]
-    df_act = df_act[df_act["activity_type"].isin(["event", "meeting", "training"])]
+    # df_act = df_act[df_act["status"].isin(["planned", "ongoing", "done"])]
+    # df_act = df_act[df_act["activity_type"].isin(["event", "meeting", "training"])]
     save_clean(df_act, "activities")
 
     # NOTIFICATION STATES
     df_notif = read_bronze("notification_states")
     df_notif = df_notif.dropna(subset=["user_id", "status"])
-    df_notif = df_notif[df_notif["status"].isin(["read", "unread"])]
+    #df_notif = df_notif[df_notif["status"].isin(["read", "unread"])]
     save_clean(df_notif, "notification_states")

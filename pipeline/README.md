@@ -80,12 +80,14 @@ Le processus suit une architecture en médaillon :
 ## Pipeline ELT (Airflow)
 
 ### Étape 1 : Extraction (Bronze)
+
 - **Objectif** : Extraction quotidienne vers MinIO bucket bronze, format CSV (un dossier par table recommandé pour facilité d'accès ultérieur).
 - PostgreSQL via `psycopg2`
 - Cassandra via `cassandra-driver`
 - Status : Fonctionnel dans Airflow (`@task.virtualenv` pour isolation).
 
 ### Étape 2 : Transformation initiale (Silver)
+
 - **Objectif** : Nettoyage, harmonisation, typage automatique.
 - Nettoyages :
   - Suppression emails nuls
