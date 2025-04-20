@@ -68,6 +68,7 @@ def transform_silver_to_notif_impact(**context):
     # Nettoyage sessions
     sessions["event_time"] = pd.to_datetime(sessions["event_time"])
     sessions["session_date"] = sessions["event_time"].dt.date
+    sessions["notif_date"] = sessions["session_date"]
     sessions["user_id"] = sessions["user_id"].astype(str)
     merged["user_id"] = merged["user_id"].astype(str)
 
