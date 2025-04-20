@@ -43,13 +43,11 @@ def transform_silver_to_notif_impact(**context):
     print("Notif Shape : ", notif_states.shape, notif_states.head())
     print("Activity Shape : ", user_notifs.shape, user_notifs.head())
 
-    # PAsse tout en str avant de merge
-    notif_states["user_id"] = notif_states["user_id"].astype(str)
-    user_notifs["user_id"] = user_notifs["user_id"].astype(str)
+    # Harmoniser les types avant le merge
     notif_states["notification_id"] = notif_states["notification_id"].astype(str)
     user_notifs["notification_id"] = user_notifs["notification_id"].astype(str)
 
-    # Supposons que si status == 'seen' c’est un succès
+    # Merge uniquement sur notification_id (pas user_id)
     merged = pd.merge(
         notif_states,
         user_notifs,
@@ -59,30 +57,36 @@ def transform_silver_to_notif_impact(**context):
 
     merged["is_success"] = merged["status"] == "read"
 
-    # Choisis la colonne notif_date à garder (celle de notif_states)
-    if "notif_date_x" in merged.columns:
-        merged = merged.rename(columns={"notif_date_x": "notif_date"})
-    elif "notif_date" not in merged.columns:
-        merged["notif_date"] = pd.to_datetime(merged["updated_at"]).dt.date
+    # Garde la notif_date de notif_states
+    merged["notif_date"] = pd.to_datetime(merged["updated_at"]).dt.date
 
-    # selection colonnes
-    merged = merged[["user_id", "content", "notif_date", "is_success"]].rename(columns={"content": "content_notif"})
+    # Sélection colonnes
+    merged = merged[["user_id_x", "content", "notif_date", "is_success"]].rename(
+        columns={"user_id_x": "user_id", "content": "content_notif"}
+    )
 
-    # Temps passé après la notif
+    # Nettoyage sessions
     sessions["event_time"] = pd.to_datetime(sessions["event_time"])
     sessions["session_date"] = sessions["event_time"].dt.date
+    sessions["user_id"] = sessions["user_id"].astype(str)
+    merged["user_id"] = merged["user_id"].astype(str)
 
-    # On filtre seulement les connexions du jour de la notif
-    after_notif = pd.merge(merged, sessions, how="left", left_on=["user_id", "notif_date"], right_on=["user_id", "session_date"])
+    # Jointure avec sessions
+    after_notif = pd.merge(
+        merged,
+        sessions,
+        how="left",
+        left_on=["user_id", "notif_date"],
+        right_on=["user_id", "session_date"]
+    )
 
-    # Calculer la durée de présence après la notification
-    durations = after_notif.groupby(["user_id", "content_notif", "notif_date", "is_success"])["event_time"].agg(
-        ["min", "max"]
-    ).reset_index()
+    # Calcul durée
+    durations = after_notif.groupby(
+        ["user_id", "content_notif", "notif_date", "is_success"]
+    )["event_time"].agg(["min", "max"]).reset_index()
+
     durations["time_spend_after_success"] = durations["max"] - durations["min"]
-
     final_df = durations[["user_id", "content_notif", "notif_date", "is_success", "time_spend_after_success"]]
-
 
     print("Final Shape : ", final_df.shape, final_df.head())
 
