@@ -48,7 +48,7 @@ def transform_cassandra_bronze_to_silver():
         print(df.shape, df.head(20))
 
         df.dropna(subset=["user_id", "notification_id", "content", "state"], inplace=True)
-        df = df[df["state"].isin(["SEEN", "FAILED", "CLICKED"])]
+        df = df[df["state"].isin(["SEEN", "DELETED", "CLICKED"])]
 
         save_parquet(df, "user_notifications")
 
@@ -58,7 +58,7 @@ def transform_cassandra_bronze_to_silver():
         df = pd.read_csv(obj)
 
         df.dropna(subset=["user_id", "purchase_id", "product_type", "amount"], inplace=True)
-        df = df[df["amount"] >= 0]
+        #df = df[df["amount"] >= 0]
         #df = df[df["currency"].isin(["EUR", "USD", "GBP"])]  # valeurs réalistes
 
         save_parquet(df, "user_purchases")
@@ -72,6 +72,6 @@ def transform_cassandra_bronze_to_silver():
         print(df.shape, df.head())
 
         df.dropna(subset=["user_id", "session_id", "event_type"], inplace=True)
-        #df = df[df["event_type"].isin(["login", "logout", "view", "click"])]
+        df = df[df["event_type"].isin(["START", "END"])]
 
         save_parquet(df, "user_session_events")
