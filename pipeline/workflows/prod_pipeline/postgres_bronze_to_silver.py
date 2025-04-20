@@ -75,5 +75,8 @@ def transform_postgres_bronze_to_silver():
     # NOTIFICATION STATES
     df_notif = read_bronze("notification_states")
     df_notif = df_notif.dropna(subset=["user_id", "status"])
+
+    print("Notif Shape : ", df_notif.shape, df_notif.head())
+
     #df_notif = df_notif[df_notif["status"].isin(["read", "unread"])]
     save_clean(df_notif, "notification_states")

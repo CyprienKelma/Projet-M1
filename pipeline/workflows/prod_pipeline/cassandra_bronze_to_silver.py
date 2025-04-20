@@ -48,7 +48,7 @@ def transform_cassandra_bronze_to_silver():
         print(df.shape, df.head())
 
         df.dropna(subset=["user_id", "notification_id", "content", "state"], inplace=True)
-        df = df[df["state"].isin(["sent", "read", "clicked"])]
+        df = df[df["state"].isin(["SEEN", "FAILED", "CLICKED"])]
 
         save_parquet(df, "user_notifications")
 
@@ -67,7 +67,10 @@ def transform_cassandra_bronze_to_silver():
     if client.bucket_exists("bronze"):
         obj = client.get_object("bronze", f"user_session_events/{today}/user_session_events.csv")
         df = pd.read_csv(obj)
-
+        
+        # TODO debug
+        print(df.shape, df.head())
+        
         df.dropna(subset=["user_id", "session_id", "event_type"], inplace=True)
         #df = df[df["event_type"].isin(["login", "logout", "view", "click"])]
 
