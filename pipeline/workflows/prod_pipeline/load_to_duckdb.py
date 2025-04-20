@@ -90,13 +90,13 @@ def load_to_duckdb(**context):
         # -------------------------------------------------------------- #
         conn.execute("""
             DELETE FROM gold_notif_impact_per_day
-            WHERE notif_date = DATE ?;
-        """, [ds])
+            WHERE notif_date = DATE '{ds}';
+        """)
 
         conn.execute("""
             DELETE FROM gold_user_activity_per_day
-            WHERE date = DATE ?;
-        """, [ds])
+            WHERE date = DATE '{ds}';
+        """)
 
         conn.execute("""
             INSERT INTO gold_notif_impact_per_day
