@@ -88,12 +88,12 @@ def load_to_duckdb(**context):
         # -------------------------------------------------------------- #
         # 2‑c. UPSERT partition du jour  (on efface puis on insère)
         # -------------------------------------------------------------- #
-        conn.execute("""
+        conn.execute(f"""
             DELETE FROM gold_notif_impact_per_day
             WHERE notif_date = DATE '{ds}';
         """)
 
-        conn.execute("""
+        conn.execute(f"""
             DELETE FROM gold_user_activity_per_day
             WHERE date = DATE '{ds}';
         """)
