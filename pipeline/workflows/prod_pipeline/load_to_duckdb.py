@@ -59,6 +59,7 @@ def load_to_duckdb(**context):
         # -------------------------------------------------------------- #
         # 2‑a. Création explicite des tables cibles (si besoin)
         # -------------------------------------------------------------- #
+        conn.execute("DROP TABLE IF EXISTS gold_notif_impact_per_day;")
         conn.execute("""
             CREATE TABLE IF NOT EXISTS gold_notif_impact_per_day (
                 user_id TEXT,
@@ -68,6 +69,7 @@ def load_to_duckdb(**context):
                 time_spend_after_success INTERVAL
             );
         """)
+        conn.execute("DROP TABLE IF EXISTS gold_user_activity_per_day;")
         conn.execute("""
             CREATE TABLE IF NOT EXISTS gold_user_activity_per_day (
                 user_id TEXT,

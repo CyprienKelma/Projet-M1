@@ -54,7 +54,7 @@ def transform_silver_to_notif_impact(**context):
 
     def int_to_uuid(prefix: str, pg_id: int) -> UUID:
         """
-        Reproduit exactement le même UUID v5 que lors du seeding :
+        Reproduit exactement le même UUID v5 que lors du seeding :
         uuidv5(NAMESPACE, f"{prefix}-{pg_id}")
         """
         return uuid5(M1_SEEDING_NAMESPACE, f"{prefix}-{pg_id}")

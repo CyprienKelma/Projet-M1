@@ -33,6 +33,7 @@ def transform_postgres_bronze_to_silver():
 
     def read_bronze(table):
         minio_path = f"{table}/{today}/{table}.csv"
+
         local_path = f"/tmp/{table}.csv"
 
         found = client.stat_object("bronze", minio_path)
