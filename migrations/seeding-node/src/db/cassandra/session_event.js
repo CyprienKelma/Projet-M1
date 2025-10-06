@@ -20,7 +20,10 @@ export async function seedUserSessionEvents(
     const userUuid = types.Uuid.fromString(userUuidStr);
     for (let i = 0; i < sessionsPerUser; i++) {
       const sessionId = types.Uuid.random();
-      const loginTime = faker.date.recent({ days: 60 });
+      const loginTime = faker.date.recent({
+        days: 30,
+        refDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
       await client.execute(query, [userUuid, loginTime, sessionId, "START"], {
         prepare: true,
       });

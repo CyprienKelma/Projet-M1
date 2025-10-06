@@ -15,6 +15,7 @@ export async function seedActivities(sql, users, groups, activitiesPerGroup) {
     "workshop",
   ];
   const statuses = ["planned", "canceled", "completed", "ongoing"];
+  const defectiveStatuses = ["PENDING", "ARCHIVED", null];
   const activities = [];
   let totalActivities = 0;
   const batchSize = 100;
@@ -34,11 +35,15 @@ export async function seedActivities(sql, users, groups, activitiesPerGroup) {
         location:
           faker.location.city() + ", " + faker.location.streetAddress(false),
         scheduled_at: faker.date.between({
-          from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          to: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+          from: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+          to: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
         }),
-        status: faker.helpers.arrayElement(statuses),
+        status:
+          faker.helpers.maybe(() => faker.helpers.arrayElement(statuses), {
+            probability: 0.92,
+          }) ?? faker.helpers.arrayElement(defectiveStatuses),
       });
+
       totalActivities++;
       if (batchData.length >= batchSize) {
         const result = await sql`

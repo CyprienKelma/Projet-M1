@@ -11,10 +11,16 @@ export async function seedUsers(sql, count) {
     const limit = Math.min(i + batchSize, count);
     for (let j = i; j < limit; j++) {
       batchData.push({
-        first_name: faker.person.firstName(),
+        first_name: faker.helpers.maybe(() => faker.person.firstName(), {
+          probability: 0.95,
+        }),
         last_name: faker.person.lastName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
+        // refDate 24h in the future
+        created_at: faker.date.recent({
+          refDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        }),
       });
     }
     const result = await sql`

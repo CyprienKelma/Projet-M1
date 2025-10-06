@@ -23,7 +23,10 @@ export async function seedUserNotifications(
     const userUuid = types.Uuid.fromString(userUuidStr);
     for (let i = 0; i < notificationsPerUser; i++) {
       const notificationId = types.Uuid.random();
-      const notificationTime = faker.date.recent({ days: 30 });
+      const notificationTime = faker.date.recent({
+        days: 10,
+        refDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
       const content = `${faker.word.adjective()} ${faker.word.noun()}: ${faker.lorem.sentence()}`;
       const state = faker.helpers.arrayElement(states);
       const modificationDelay = faker.number.int({ min: 1, max: 1000000 });

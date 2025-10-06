@@ -19,7 +19,10 @@ export async function seedNotificationStates(sql, users, notificationsPerUser) {
         user_id: user.id,
         notification_id: notificationId,
         status: faker.helpers.arrayElement(statusOptions),
-        updated_at: faker.date.recent({ days: 30 }),
+        updated_at: faker.date.recent({
+          days: 30,
+          refDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        }),
       });
       totalStates++;
       if (batchData.length >= batchSize) {

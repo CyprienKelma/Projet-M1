@@ -88,8 +88,29 @@ export async function seedPostgres() {
       await sql`TRUNCATE groups_users_user RESTART IDENTITY CASCADE`;
       await sql`TRUNCATE groups RESTART IDENTITY CASCADE`;
       await sql`TRUNCATE users RESTART IDENTITY CASCADE`;
-      if (!isDryRun)
+
+      // test if the tables are empty
+      const usersCount = await sql`SELECT COUNT(*) FROM users`;
+      const groupsCount = await sql`SELECT COUNT(*) FROM groups`;
+      const activitiesCount = await sql`SELECT COUNT(*) FROM activities`;
+      const notificationsCount =
+        await sql`SELECT COUNT(*) FROM notification_states`;
+      console.log(`Users: ${usersCount[0].count}`);
+      console.log(`Groups: ${groupsCount[0].count}`);
+      console.log(`Activities: ${activitiesCount[0].count}`);
+      console.log(`Notifications: ${notificationsCount[0].count}`);
+
+      if (!isDryRun) {
+        if (usersCount[0].count > 0)
+          console.warn("⚠️ Users table is not empty after truncation.");
+        if (groupsCount[0].count > 0)
+          console.warn("⚠️ Groups table is not empty after truncation.");
+        if (activitiesCount[0].count > 0)
+          console.warn("⚠️ Activities table is not empty after truncation.");
+        if (notificationsCount[0].count > 0)
+          console.warn("⚠️ Notifications table is not empty after truncation.");
         console.log("✅ PostgreSQL tables truncated successfully.");
+      }
     } catch (err) {
       if (!isDryRun)
         console.warn("⚠️ PostgreSQL table truncation failed:", err.message);

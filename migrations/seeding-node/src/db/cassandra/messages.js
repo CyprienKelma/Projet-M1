@@ -21,8 +21,15 @@ export async function seedGroupMessages(client, pgResults, messagesPerGroup) {
       const userUuidStr = generateUuid(`user-${user.id}`);
       const userUuid = types.Uuid.fromString(userUuidStr);
       const messageId = types.Uuid.random();
-      const createdAt = faker.date.recent({ days: 60 });
-      const content = faker.lorem.sentence();
+      const createdAt = faker.date.recent({
+        days: 30,
+        refDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+      const content =
+        faker.helpers.maybe(
+          () => faker.lorem.sentence({ min: 1, max: 5 }), // Shorter sentences
+          { probability: 0.94 },
+        ) ?? faker.helpers.arrayElement(["", null]);
       const params = [groupUuid, createdAt, messageId, userUuid, content];
       await client.execute(query, params, { prepare: true });
       count++;

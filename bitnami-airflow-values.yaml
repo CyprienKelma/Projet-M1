@@ -1,0 +1,54 @@
+# image:
+#   registry: docker.io
+#   repository: cyprienklm/airflow-m1
+#   tag: latest
+#   pullPolicy: Always
+
+global:
+  security:
+    allowInsecureImages: true
+
+executor: KubernetesExecutor
+loadExamples: true
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
+
+rbac:
+  create: true
+
+dags:
+  enabled: true
+  repositories:
+    - repository: https://github.com/CyprienKelma/Projet-M1.git
+      branch: pipeline-dev
+      name: pipeline-workflows
+      path: pipeline/workflows
+
+web:
+  replicaCount: 1
+  resourcesPreset: medium
+  automountServiceAccountToken: true
+
+scheduler:
+  replicaCount: 1
+  resourcesPreset: small
+  automountServiceAccountToken: true
+
+worker:
+  enabled: false # Not needed for KubernetesExecutor
+
+postgresql:
+  enabled: true
+  auth:
+    enablePostgresUser: true
+    username: airflow
+    password: password # set via secret ideally
+    database: bitnami_airflow
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: password

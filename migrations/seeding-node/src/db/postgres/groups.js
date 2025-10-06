@@ -13,6 +13,9 @@ export async function seedGroups(sql, count) {
       batchData.push({
         name: faker.company.name(),
         description: faker.lorem.paragraph(),
+        created_at: faker.date.recent({
+          refDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        }),
       });
     }
     const result = await sql`

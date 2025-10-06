@@ -1,0 +1,56 @@
+{{- if .Values.cronjob.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "seeding.fullname" . }}-cronjob
+  labels:
+    {{- include "seeding.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cronjob
+spec:
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  concurrencyPolicy: {{ .Values.cronjob.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      # Optional: Add activeDeadlineSeconds if jobs should timeout
+      # activeDeadlineSeconds: 3600 # e.g., 1 hour
+      backoffLimit: {{ .Values.cronjob.backoffLimit | default 1 }} # Allow overriding backoffLimit for cronjob specifically
+      template:
+        # Metadata for the Pod created by the Job
+        metadata:
+          labels:
+            # Add specific labels for the pod if needed, inheriting job labels
+            {{- include "seeding.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: cronjob-pod
+        # Pod spec (copied from seeding-job.yaml)
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: seeder
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              env:
+                - name: PG_HOST
+                  value: "{{ .Values.postgresql.host }}"
+                - name: PG_PORT
+                  value: "{{ .Values.postgresql.port }}"
+                - name: PG_USERNAME
+                  value: "{{ .Values.postgresql.username }}"
+                - name: PG_PASSWORD
+                  value: "{{ .Values.postgresql.password }}" # Consider using secrets for production
+                - name: PG_DATABASE
+                  value: "{{ .Values.postgresql.database }}"
+                - name: CASSANDRA_HOST
+                  value: "{{ .Values.cassandra.host }}"
+                - name: CASSANDRA_PORT
+                  value: "{{ .Values.cassandra.port }}"
+                - name: CASSANDRA_USERNAME
+                  value: "{{ .Values.cassandra.username }}" # Consider using secrets for production
+                - name: CASSANDRA_PASSWORD
+                  value: "{{ .Values.cassandra.password }}" # Consider using secrets for production
+                - name: CASSANDRA_KEYSPACE
+                  value: "{{ .Values.cassandra.keyspace }}"
+                - name: DATA_VOLUME
+                  value: "{{ .Values.seeding.dataVolume }}"
+{{- end }}

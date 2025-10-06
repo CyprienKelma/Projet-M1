@@ -24,7 +24,10 @@ export async function seedUserPurchases(client, pgResults, purchasesPerUser) {
     if (Math.random() > 0.3) continue;
     for (let i = 0; i < purchasesPerUser; i++) {
       const purchaseId = types.Uuid.random();
-      const purchaseTime = faker.date.past({ years: 0.5 });
+      const purchaseTime = faker.date.past({
+        years: 0.1,
+        refDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
       const productType = faker.helpers.arrayElement(productTypes);
       const amount = parseFloat(
         faker.finance.amount({ min: 1, max: 50, dec: 2 }),

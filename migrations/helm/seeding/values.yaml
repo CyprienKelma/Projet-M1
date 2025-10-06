@@ -3,6 +3,15 @@ image:
   tag: latest
   pullPolicy: Always
 
+# CronJob configuration for scheduled seeding
+cronjob:
+  enabled: false # Set to true to deploy the CronJob
+  schedule: "0 1 * * *" # Default: Run daily at 1:00 AM UTC
+  concurrencyPolicy: Forbid # Options: Allow, Forbid, Replace
+  successfulJobsHistoryLimit: 1 # Number of successful jobs to keep
+  failedJobsHistoryLimit: 3 # Number of failed jobs to keep
+  backoffLimit: 1 # Retries for a failed job within a single cron run
+
 postgresql:
   host: postgres-minimal-cluster.postgresql.svc.cluster.local
   port: "5432"
