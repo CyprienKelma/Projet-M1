@@ -6,23 +6,12 @@ This repository contains the source code and configuration files for a distribut
 1. [Project Overview](#project-overview)
 2. [Architecture Summary](#architecture-summary)
 3. [Data Pipeline (ELT)](#data-pipeline-elt)
-4. [Backend System](#backend-system)
-    - [API Endpoints Overview](#api-endpoints-overview)
-        - [PostgreSQL](#postgresql-via-typeorm)
-        - [Cassandra](#cassandra-via-cassandra-driver)
-        - [MinIO](#minio-s3-compatible-storage)
-5. [Folder Descriptions](#folder-descriptions)
-6. [Summary Of The Technologies Used](#summary-of-the-technologies-used)
-7. [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-    - [Deployment](#deployment)
-    - [Usage](#usage)
-8. [Features](#features)
-9. [Future Improvements](#future-improvements)
-10. [Known Challenges](#known-challenges)
-11. [Fully Described Documentation](#documentation)
-12. [Authors](#authors)
+4. [Features](#features)
+5. [Backend System](#backend-system)
+6. [Future Improvements](#future-improvements)
+7. [Known Challenges](#known-challenges)
+8. [Fully Described Documentation](#fully-described-documentation)
+9. [Authors](#authors)
 
 
 ## Project Overview
@@ -100,140 +89,6 @@ The backend focuses on the management and advanced testing of each storage syste
     Download a file by specifying the filename in the URL.  
     Example: `http://localhost:3000/storage/download/test-image.png`
 
-```
-Projet-M1/ 
-|   # backend part :
-├── backend-distributed-api/
-│   ├── dist/                        # Compiled files after build
-│   ├── node_modules/                # Project dependencies
-│   ├── notebooks/                   # API testing and performance analysis
-│   │   ├── api_tests.ipynb          # Comprehensive database tests
-│   │   └── data_analysis.ipynb      # Advanced analyses (later)
-│   ├── src/
-│   │   ├── config/                  # General & DB configurations
-│   │   │   ├── config.module.ts
-│   │   │   ├── postgres.config.ts
-│   │   │   ├── redis.config.ts
-│   │   │   ├── neo4j.config.ts
-│   │   │   ├── cassandra.config.ts
-│   │   │   └── storage.config.ts
-│   │   ├── controllers/             # REST API controllers
-│   │   │   ├── user.controller.ts
-│   │   │   ├── message.controller.ts
-│   │   │   ├── notification.controller.ts
-│   │   │   ├── group.controller.ts
-│   │   │   └── storage.controller.ts
-│   │   ├── databases/               # Database-specific modules
-│   │   │   ├── postgres/
-│   │   │   │   ├── postgres.module.ts
-│   │   │   │   └── postgres.provider.ts
-│   │   │   ├── redis/
-│   │   │   │   ├── redis.module.ts
-│   │   │   │   └── redis.provider.ts
-│   │   │   ├── neo4j/
-│   │   │   │   ├── neo4j.module.ts
-│   │   │   │   └── neo4j.provider.ts
-│   │   │   ├── cassandra/
-│   │   │   │   ├── cassandra.module.ts
-│   │   │   │   └── cassandra.provider.ts
-│   │   │   └── storage/
-│   │   │       ├── storage.module.ts
-│   │   │       └── storage.provider.ts
-│   │   ├── models/                  # Database schemas
-│   │   │   ├── postgres/
-│   │   │   │   ├── user.entity.ts
-│   │   │   │   └── group.entity.ts
-│   │   │   ├── cassandra/
-│   │   │   │   ├── message.model.ts
-│   │   │   │   └── notification.model.ts
-│   │   │   └── neo4j/
-│   │   │       └── relationship.model.ts
-│   │   ├── services/                # Business logic
-│   │   │   ├── postgres/
-│   │   │   │   ├── user.service.ts
-│   │   │   │   └── group.service.ts
-│   │   │   ├── cassandra/
-│   │   │   │   ├── message.service.ts
-│   │   │   │   └── notification.service.ts
-│   │   │   ├── neo4j/
-│   │   │   │   └── relationship.service.ts
-│   │   │   ├── redis/
-│   │   │   │   └── cache.service.ts
-│   │   │   └── storage/
-│   │   │       └── file-storage.service.ts
-│   │   ├── scripts/                 # Advanced utility scripts
-│   │   │   ├── postgres_fake_data.ts
-│   │   │   ├── cassandra_fake_data.ts
-│   │   │   ├── neo4j_fake_data.ts
-│   │   │   └── storage_upload_test.ts
-│   │   ├── shared/                  # Common interfaces and DTOs
-│   │   │   ├── dto/
-│   │   │   │   ├── user.dto.ts
-│   │   │   │   ├── message.dto.ts
-│   │   │   │   └── notification.dto.ts
-│   │   │   └── interfaces/
-│   │   │       └── generic.interface.ts
-│   │   ├── app.module.ts            # Root NestJS module
-│   │   └── main.ts                  # Application entry point
-│   ├── uploads/                     # Temporary file storage before Bucket upload
-│   ├── .dockerignore
-│   ├── .env                         # Global environment variables
-│   ├── .gitignore
-│   ├── .prettierrc
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── README.md
-```
-
-### Folder Descriptions
-
-- **config/**: Configuration modules for each database.
-- **controllers/**: REST route management for each entity.
-- **databases/**: Providers and modules specific to database connections.
-- **models/**: Schemas and entities for each database.
-- **services/**: Business logic for database interactions.
-- **scripts/**: Mock data generation scripts for testing.
-- **shared/**: Shared DTOs and interfaces between services.
-- **uploads/**: Temporary file storage before Bucket upload.
-
-
-
-## Summary Of The Technologies Used
-
-- **Languages**: Python, TypeScript, SQL, Cypher
-- **Frameworks**: NestJS, Apache Airflow, Apache Spark
-- **Databases**: PostgreSQL, Cassandra, Neo4j, KeyDB, DuckDB
-- **Orchestration**: Kubernetes, Helm
-- **Storage**: MinIO (S3 buckets)
-- **Data Processing**: Pandas, PySpark
-
-## Getting Started
-
-> ⚠️ Please complete the following setup sections based on your specific environment.
-
-### Prerequisites
-
-- Docker
-- kubectl
-- Helm
-- k3s or any Kubernetes cluster
-- Python 3.10+
-
-### Installation
-
-_TODO: Add instructions for cloning the repo, setting up the environment, and deploying the architecture._
-
-### Deployment
-
-_TODO: Include how to apply Helm charts, configure Kubernetes resources, and start services._
-
-### Usage
-
-_TODO: Describe how to interact with the backend, run Airflow pipelines, and access DuckDB analytics._
-
-
 ## Features
 
 - Declarative, modular, entreprise-level infrastructure
@@ -259,7 +114,7 @@ _TODO: Describe how to interact with the backend, run Airflow pipelines, and acc
 
 ## Fully Described Documentation
 
-Refer to the [Technical Report (French)](./pictures/fiche_technique_projet_m1.pdf) for a more detailed explanation of the system design, components and our motivations with this project.
+Refer to the [Technical Report (French)](https://drive.google.com/file/d/1x0aIjapqhaVRPJEvIRTzORIR9aschmZv) for a more detailed explanation of the system design, components and our motivations with this project.
 
 ## Authors
 
@@ -269,5 +124,5 @@ Refer to the [Technical Report (French)](./pictures/fiche_technique_projet_m1.pd
 - Paul Pousset  
 - Mamoun Kabbaj  
 
-> © 2025 - Junia ISEN – Big Data Specialization  
+> © 2025 - Junia ISEN Engineering School – Big Data Specialization  
 > For educational and demonstration purposes only.
